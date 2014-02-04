@@ -6,7 +6,6 @@
 // [1]: http://www.sfml-dev.org/
 package window
 
-// #cgo LDFLAGS: -lcsfml-graphics
 // #include <SFML/Graphics/RenderWindow.h>
 import "C"
 
@@ -33,10 +32,9 @@ func Open(width, height int) (win wandi.Window, err error) {
 		height:       C.uint(height),
 		bitsPerPixel: 32,
 	}
+	title := C.CString("untitled")
 	style := C.sfUint32(0)
-	// TODO(u): Verify that it is possible to create a window without Unicode and
-	// later set to title using Unicode.
-	sfmlWin.w = C.sfRenderWindow_create(mode, C.CString("untitled"), style, nil)
+	sfmlWin.w = C.sfRenderWindow_create(mode, title, style, nil)
 	return sfmlWin, nil
 }
 
@@ -47,11 +45,10 @@ func (sfmlWin *sfmlWindow) Close() {
 }
 
 // SetTitle sets the title of the window.
+//
+// Note: The title will be updated on the next call to PollEvent.
 func (sfmlWin *sfmlWindow) SetTitle(title string) {
-	// TODO(u): Use Unicode version of setTitle.
-	// TODO(u): Verify that SetTitle works. Maybe it requires a call to PollEvent
-	// to update.
-	C.sfRenderWindow_setTitle(sfmlWin.w, C.CString(title))
+	C.sfRenderWindow_setUnicodeTitle(sfmlWin.w, utf32(title))
 }
 
 // Update displays window updates on the screen.

@@ -1,5 +1,8 @@
 package window
 
+// #include <SFML/Graphics/RenderWindow.h>
+import "C"
+
 import (
 	"github.com/mewmew/we"
 )
@@ -12,5 +15,10 @@ import (
 //
 // Note: PollEvent must be called from the same thread that created the window.
 func (sfmlWin *sfmlWindow) PollEvent() (event we.Event) {
-	panic("sfmlWindow.PollEvent: not yet implemented.")
+	var sfmlEvent C.sfEvent
+	if C.sfRenderWindow_pollEvent(sfmlWin.w, &sfmlEvent) == C.sfFalse {
+		return nil
+	}
+	// TODO(u): not yet implemented.
+	return nil
 }

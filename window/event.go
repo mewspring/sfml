@@ -1,4 +1,4 @@
-package win
+package window
 
 import (
 	"github.com/mewmew/we"
@@ -11,6 +11,6 @@ import (
 // was empty.
 //
 // Note: PollEvent must be called from the same thread that created the window.
-func (win *sfmlWindow) PollEvent() (event we.Event) {
+func (sfmlWin *sfmlWindow) PollEvent() (event we.Event) {
 	panic("sfmlWindow.PollEvent: not yet implemented.")
 }

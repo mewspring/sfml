@@ -18,10 +18,10 @@ Documentation
 Documentation provided by GoDoc.
 
 - [sfml][]: handles image drawing operations.
-   - [win][sfml/win]: handles window creation, drawing and events.
+   - [window][sfml/window]: handles window creation, drawing and events.
 
 [sfml]: http://godoc.org/github.com/mewmew/sfml
-[sfml/win]: http://godoc.org/github.com/mewmew/sfml/win
+[sfml/window]: http://godoc.org/github.com/mewmew/sfml/window
 
 public domain
 -------------

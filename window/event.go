@@ -38,13 +38,14 @@ import (
 	"github.com/mewmew/we"
 )
 
-// TODO(u): Add note about the need to call PollEvent even when not using
-// events, since this is required by the window.
-
 // PollEvent returns a pending event from the event queue or nil if the queue
-// was empty.
+// was empty. Note that more than one event may be present in the event queue.
 //
 // Note: PollEvent must be called from the same thread that created the window.
+//
+// Note: Some internal window events of SFML depend on calls to PollEvent to
+// take effect. For instance a call to SetTitle will not update the window title
+// until the next call of PollEvent.
 func (sfmlWin *sfmlWindow) PollEvent() (event we.Event) {
 	// Poll the event queue until we locate a non-nil event or the queue is
 	// empty.

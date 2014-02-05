@@ -17,9 +17,22 @@ package window
 // sfTextEvent getTextEvent(sfEvent e) {
 //    return e.text;
 // }
+//
+// sfMouseMoveEvent getMouseMoveEvent(sfEvent e) {
+//    return e.mouseMove;
+// }
+//
+// sfMouseButtonEvent getMouseButtonEvent(sfEvent e) {
+//    return e.mouseButton;
+// }
+//
+// sfMouseWheelEvent getMouseWheelEvent(sfEvent e) {
+//    return e.mouseWheel;
+// }
 import "C"
 
 import (
+	"image"
 	"log"
 
 	"github.com/mewmew/we"
@@ -47,6 +60,9 @@ func (sfmlWin *sfmlWindow) PollEvent() (event we.Event) {
 		}
 	}
 }
+
+// prev represents the previously recorded cursor position.
+var prev image.Point
 
 // weEvent returns the we.Event corresponding to the provided SFML event.
 func weEvent(sfmlEvent C.sfEvent) (event we.Event) {
@@ -84,12 +100,47 @@ func weEvent(sfmlEvent C.sfEvent) (event we.Event) {
 		return event
 
 	// Mouse events.
-	//case C.sfEvtMouseWheelMoved:
-	//case C.sfEvtMouseButtonPressed:
-	//case C.sfEvtMouseButtonReleased:
-	//case C.sfEvtMouseMoved:
-	//case C.sfEvtMouseEntered:
-	//case C.sfEvtMouseLeft:
+	case C.sfEvtMouseWheelMoved:
+		e := C.getMouseWheelEvent(sfmlEvent)
+		pt := image.Pt(int(e.x), int(e.y))
+		event = we.ScrollY{
+			Point: pt,
+			Off:   int(e.delta),
+			Mod:   getMod(),
+		}
+		return event
+	case C.sfEvtMouseButtonPressed:
+		e := C.getMouseButtonEvent(sfmlEvent)
+		pt := image.Pt(int(e.x), int(e.y))
+		event = we.MousePress{
+			Point:  pt,
+			Button: weButton(e.button),
+			Mod:    getMod(),
+		}
+		return event
+	case C.sfEvtMouseButtonReleased:
+		e := C.getMouseButtonEvent(sfmlEvent)
+		pt := image.Pt(int(e.x), int(e.y))
+		event = we.MouseRelease{
+			Point:  pt,
+			Button: weButton(e.button),
+			Mod:    getMod(),
+		}
+		return event
+	case C.sfEvtMouseMoved:
+		// TODO(u): implement MouseDrag event.
+		e := C.getMouseMoveEvent(sfmlEvent)
+		pt := image.Pt(int(e.x), int(e.y))
+		event = we.MouseMove{
+			Point: pt,
+			From:  prev,
+		}
+		prev = pt
+		return event
+	case C.sfEvtMouseEntered:
+		return we.MouseEnter(true)
+	case C.sfEvtMouseLeft:
+		return we.MouseEnter(false)
 
 	default:
 		log.Printf("weEvent: event %d not yet implemented.\n", typ)

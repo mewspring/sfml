@@ -1,6 +1,6 @@
 package window
 
-// #cgo LDFLAGS: -lcsfml-graphics
+// #cgo LDFLAGS: -lcsfml-graphics -lcsfml-window
 // #include <SFML/Graphics/Color.h>
 import "C"
 

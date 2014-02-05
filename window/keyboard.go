@@ -7,6 +7,27 @@ import (
 	"github.com/mewmew/we"
 )
 
+// getMod returns the active keyboard modifiers.
+func getMod() (mod we.Mod) {
+	if C.sfKeyboard_isKeyPressed(C.sfKeyLShift) == C.sfTrue ||
+		C.sfKeyboard_isKeyPressed(C.sfKeyRShift) == C.sfTrue {
+		mod |= we.ModShift
+	}
+	if C.sfKeyboard_isKeyPressed(C.sfKeyLControl) == C.sfTrue ||
+		C.sfKeyboard_isKeyPressed(C.sfKeyRControl) == C.sfTrue {
+		mod |= we.ModControl
+	}
+	if C.sfKeyboard_isKeyPressed(C.sfKeyLAlt) == C.sfTrue ||
+		C.sfKeyboard_isKeyPressed(C.sfKeyRAlt) == C.sfTrue {
+		mod |= we.ModAlt
+	}
+	if C.sfKeyboard_isKeyPressed(C.sfKeyLSystem) == C.sfTrue ||
+		C.sfKeyboard_isKeyPressed(C.sfKeyRSystem) == C.sfTrue {
+		mod |= we.ModSuper
+	}
+	return mod
+}
+
 // weMod returns the we.Mod corresponding to the provided SFML modifiers.
 func weMod(e C.sfKeyEvent) (mod we.Mod) {
 	if e.shift == C.sfTrue {

@@ -12,39 +12,46 @@ import (
 	"github.com/mewmew/wandi"
 )
 
-// A sfmlImg is a mutable collection of pixels. It implements the wandi.Image
-// interface.
-type sfmlImg struct {
+// A sfmlImage is a mutable collection of pixels, which is stored in CPU memory.
+// It implements the wandi.Image interface.
+type sfmlImage struct {
 }
 
 // TODO(u): Add note about free to NewImage, LoadImage and ReadImage?
 //
 // Note: The Free method of the image should be called when finished using it.
 
-// NewImage returns a new image of the specified dimensions.
+// NewImage returns a new image of the specified dimensions. The image is stored
+// in CPU memory.
 func NewImage(width, height int) (img wandi.Image, err error) {
 	panic("sfml.NewImage: not yet implemented.")
 }
 
-// LoadImage loads the provided image file and returns it as an image.
+// LoadImage loads the provided image file and returns it as an image. The image
+// is stored in CPU memory.
 func LoadImage(imgPath string) (img wandi.Image, err error) {
 	panic("sfml.LoadImage: not yet implemented.")
 }
 
 // ReadImage reads the provided image, converts it to the standard image format
-// of this library and returns it.
+// of this library and returns it. The image is stored in CPU memory.
 func ReadImage(src image.Image) (img wandi.Image, err error) {
 	panic("sfml.ReadImage: not yet implemented.")
 }
 
+// Free frees the image.
+func (img *sfmlImage) Free() {
+	panic("sfmlImage.Free: not yet implemented.")
+}
+
 // Draw draws the entire src image onto the dst image starting at the
 // destination point dp.
-func (dst *sfmlImg) Draw(dp image.Point, src wandi.Image) (err error) {
-	panic("sfmlImg.Draw: not yet implemented.")
+func (dst *sfmlImage) Draw(dp image.Point, src wandi.Image) (err error) {
+	panic("sfmlImage.Draw: not yet implemented.")
 }
 
 // DrawRect fills the destination rectangle dr of the dst image with
 // corresponding pixels from the src image starting at the source point sp.
-func (dst *sfmlImg) DrawRect(dr image.Rectangle, src wandi.Image, sp image.Point) (err error) {
-	panic("sfmlImg.DrawRect: not yet implemented.")
+func (dst *sfmlImage) DrawRect(dr image.Rectangle, src wandi.Image, sp image.Point) (err error) {
+	panic("sfmlImage.DrawRect: not yet implemented.")
 }

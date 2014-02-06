@@ -64,13 +64,13 @@ func (tex *Texture) Free() {
 
 // Width returns the width of the image.
 func (tex *Texture) Width() int {
-	size := C.sfTexture_getSize(tex.Tex)
+	size := C.sfRenderTexture_getSize(tex.Tex)
 	return int(size.x)
 }
 
 // Height returns the height of the image.
 func (tex *Texture) Height() int {
-	size := C.sfTexture_getSize(tex.Tex)
+	size := C.sfRenderTexture_getSize(tex.Tex)
 	return int(size.y)
 }
 

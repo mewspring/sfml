@@ -6,52 +6,91 @@
 // [1]: http://www.sfml-dev.org/
 package sfml
 
+// #include <SFML/Graphics.h>
+import "C"
+
 import (
+	"fmt"
 	"image"
 
 	"github.com/mewmew/wandi"
 )
 
-// A sfmlImage is a mutable collection of pixels, which is stored in CPU memory.
+// An Image is a mutable collection of pixels, which is stored in CPU memory.
 // It implements the wandi.Image interface.
-type sfmlImage struct {
+type Image struct {
+	// Img is a SFML image stored in CPU memory.
+	Img *C.sfImage
 }
-
-// TODO(u): Add note about free to NewImage, LoadImage and ReadImage?
-//
-// Note: The Free method of the image should be called when finished using it.
 
 // NewImage returns a new image of the specified dimensions. The image is stored
 // in CPU memory.
+//
+// Note: The Free method of the image should be called when finished using it.
 func NewImage(width, height int) (img wandi.Image, err error) {
-	panic("sfml.NewImage: not yet implemented.")
+	sfmlImg := new(Image)
+	sfmlImg.Img = C.sfImage_create(C.uint(width), C.uint(height))
+	if sfmlImg.Img == nil {
+		return nil, fmt.Errorf("sfml.NewImage: unable to create %dx%d image", width, height)
+	}
+	return sfmlImg, nil
 }
 
 // LoadImage loads the provided image file and returns it as an image. The image
 // is stored in CPU memory.
-func LoadImage(imgPath string) (img wandi.Image, err error) {
-	panic("sfml.LoadImage: not yet implemented.")
+//
+// Note: The Free method of the image should be called when finished using it.
+func LoadImage(filePath string) (img wandi.Image, err error) {
+	sfmlImg := new(Image)
+	sfmlImg.Img = C.sfImage_createFromFile(C.CString(filePath))
+	if sfmlImg.Img == nil {
+		return nil, fmt.Errorf("sfml.LoadImage: unable to load image %q", filePath)
+	}
+	return sfmlImg, nil
 }
 
 // ReadImage reads the provided image, converts it to the standard image format
 // of this library and returns it. The image is stored in CPU memory.
+//
+// Note: The Free method of the image should be called when finished using it.
 func ReadImage(src image.Image) (img wandi.Image, err error) {
 	panic("sfml.ReadImage: not yet implemented.")
 }
 
 // Free frees the image.
-func (img *sfmlImage) Free() {
-	panic("sfmlImage.Free: not yet implemented.")
+func (img *Image) Free() {
+	C.sfImage_destroy(img.Img)
+}
+
+// Width returns the width of the image.
+func (img *Image) Width() int {
+	size := C.sfImage_getSize(img.Img)
+	return int(size.x)
+}
+
+// Height returns the height of the image.
+func (img *Image) Height() int {
+	size := C.sfImage_getSize(img.Img)
+	return int(size.y)
 }
 
 // Draw draws the entire src image onto the dst image starting at the
 // destination point dp.
-func (dst *sfmlImage) Draw(dp image.Point, src wandi.Image) (err error) {
-	panic("sfmlImage.Draw: not yet implemented.")
+func (dst *Image) Draw(dp image.Point, src wandi.Image) (err error) {
+	dr := image.Rect(dp.X, dp.Y, dp.X+src.Width(), dp.Y+src.Height())
+	return dst.DrawRect(dr, src, image.ZP)
 }
 
 // DrawRect fills the destination rectangle dr of the dst image with
 // corresponding pixels from the src image starting at the source point sp.
-func (dst *sfmlImage) DrawRect(dr image.Rectangle, src wandi.Image, sp image.Point) (err error) {
-	panic("sfmlImage.DrawRect: not yet implemented.")
+func (dst *Image) DrawRect(dr image.Rectangle, src wandi.Image, sp image.Point) (err error) {
+	switch srcImg := src.(type) {
+	case *Image:
+		sr := image.Rect(sp.X, sp.Y, sp.X+dr.Dx(), sp.Y+dr.Dy())
+		srcRect := sfmlIntRect(sr)
+		C.sfImage_copyImage(dst.Img, srcImg.Img, C.uint(dr.Min.X), C.uint(dr.Min.Y), srcRect, C.sfTrue)
+	default:
+		return fmt.Errorf("Image.DrawRect: support for image format %T not yet implemented", src)
+	}
+	return nil
 }

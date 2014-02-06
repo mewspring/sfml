@@ -77,18 +77,17 @@ func (img *Image) Height() int {
 // Draw draws the entire src image onto the dst image starting at the
 // destination point dp.
 func (dst *Image) Draw(dp image.Point, src wandi.Image) (err error) {
-	dr := image.Rect(dp.X, dp.Y, dp.X+src.Width(), dp.Y+src.Height())
-	return dst.DrawRect(dr, src, image.ZP)
+	sr := image.Rect(0, 0, src.Width(), src.Height())
+	return dst.DrawRect(dp, src, sr)
 }
 
 // DrawRect fills the destination rectangle dr of the dst image with
 // corresponding pixels from the src image starting at the source point sp.
-func (dst *Image) DrawRect(dr image.Rectangle, src wandi.Image, sp image.Point) (err error) {
+func (dst *Image) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
 	switch srcImg := src.(type) {
 	case *Image:
-		sr := image.Rect(sp.X, sp.Y, sp.X+dr.Dx(), sp.Y+dr.Dy())
 		srcRect := sfmlIntRect(sr)
-		C.sfImage_copyImage(dst.Img, srcImg.Img, C.uint(dr.Min.X), C.uint(dr.Min.Y), srcRect, C.sfTrue)
+		C.sfImage_copyImage(dst.Img, srcImg.Img, C.uint(dp.X), C.uint(dp.Y), srcRect, C.sfTrue)
 	default:
 		return fmt.Errorf("Image.DrawRect: support for image format %T not yet implemented", src)
 	}

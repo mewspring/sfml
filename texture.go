@@ -78,20 +78,16 @@ func (tex *Texture) Height() int {
 // Draw draws the entire src image onto the dst image starting at the
 // destination point dp.
 func (dst *Texture) Draw(dp image.Point, src wandi.Image) (err error) {
-	panic("Texture.Draw: not yet implemented.")
+	sr := image.Rect(0, 0, src.Width(), src.Height())
+	return dst.DrawRect(dp, src, sr)
 }
-
-// TODO(u): Rethink dr, sp for DrawRect. It would probably be more consistent to
-// use dp, sr instead.
 
 // DrawRect fills the destination rectangle dr of the dst image with
 // corresponding pixels from the src image starting at the source point sp.
-func (dst *Texture) DrawRect(dr image.Rectangle, src wandi.Image, sp image.Point) (err error) {
+func (dst *Texture) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
 	switch srcImg := src.(type) {
 	case *Texture:
-		sr := image.Rect(sp.X, sp.Y, sp.X+dr.Dx(), sp.Y+dr.Dy())
 		C.sfSprite_setTextureRect(srcImg.Sprite, sfmlIntRect(sr))
-		dp := dr.Min
 		C.sfSprite_setPosition(srcImg.Sprite, sfmlFloatPt(dp))
 		C.sfRenderTexture_drawSprite(dst.RenderTex, srcImg.Sprite, nil)
 		C.sfRenderTexture_display(dst.RenderTex)

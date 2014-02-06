@@ -9,6 +9,7 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"image/color"
 )
 
 func (img *Image) WriteFile(filePath string) (err error) {
@@ -19,7 +20,7 @@ func (img *Image) WriteFile(filePath string) (err error) {
 }
 
 func (tex *Texture) WriteFile(filePath string) (err error) {
-	t := C.sfRenderTexture_getTexture(tex.Tex)
+	t := C.sfRenderTexture_getTexture(tex.RenderTex)
 	img := C.sfTexture_copyToImage(t)
 	if img == nil {
 		return errors.New("Texture.WriteFile: unable to create image of texture.")
@@ -28,4 +29,8 @@ func (tex *Texture) WriteFile(filePath string) (err error) {
 		return fmt.Errorf("Image.WriteFile: unable to write image to %q", filePath)
 	}
 	return nil
+}
+
+func (tex *Texture) Clear(c color.Color) {
+	C.sfRenderTexture_clear(tex.RenderTex, sfmlColor(c))
 }

@@ -44,29 +44,11 @@ func sfmlFloatRect(r image.Rectangle) C.sfFloatRect {
 	return sfmlRect
 }
 
-// sfmlView defines a camera in the 2D scene. A view is composed of a source
-// rectangle, which defines what part of the 2D scene is shown, and a target
-// viewport, which defines where the contents of the source rectangle will be
-// displayed on the render target.
-type sfmlView struct {
-	view *C.sfView
-}
-
-// newView returns a C sfView based on the provided destination rectangle and
-// source point. The scale between the view and the viewport is one to one.
-//
-// Note: The free method of the view must be called when finished using it.
-func newView(dr image.Rectangle, sp image.Point) (view *sfmlView) {
-	view = new(sfmlView)
-	sr := image.Rect(sp.X, sp.Y, sp.X+dr.Dx(), sp.Y+dr.Dy())
-	srcRect := sfmlFloatRect(sr)
-	view.view = C.sfView_createFromRect(srcRect)
-	viewportRect := sfmlFloatRect(dr)
-	C.sfView_setViewport(view.view, viewportRect)
-	return view
-}
-
-// free frees the view.
-func (view *sfmlView) free() {
-	C.sfView_destroy(view.view)
+// sfmlFloatPt returns a C sfVector2f based on the provided Go image.Point.
+func sfmlFloatPt(pt image.Point) C.sfVector2f {
+	sfmlPt := C.sfVector2f{
+		x: C.float(pt.X),
+		y: C.float(pt.Y),
+	}
+	return sfmlPt
 }

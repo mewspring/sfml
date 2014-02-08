@@ -20,8 +20,7 @@ func (img *Image) WriteFile(filePath string) (err error) {
 }
 
 func (tex *Texture) WriteFile(filePath string) (err error) {
-	t := C.sfRenderTexture_getTexture(tex.RenderTex)
-	img := C.sfTexture_copyToImage(t)
+	img := C.sfTexture_copyToImage(tex.getTex())
 	if img == nil {
 		return errors.New("Texture.WriteFile: unable to create image of texture.")
 	}

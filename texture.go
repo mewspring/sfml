@@ -5,6 +5,7 @@ import "C"
 
 import (
 	"errors"
+	"fmt"
 	"image"
 
 	"github.com/mewmew/wandi"
@@ -27,7 +28,6 @@ type Texture struct {
 // Note: The Free method of the image should be called when finished using it.
 func NewTexture(width, height int) (img wandi.Image, err error) {
 	tex := new(Texture)
-	// TODO(u): Should we enable the depth buffer?
 	tex.RenderTex = C.sfRenderTexture_create(C.uint(width), C.uint(height), C.sfFalse)
 	if tex.RenderTex == nil {
 		return nil, errors.New("sfml.NewTexture: unable to create texture")
@@ -36,9 +36,13 @@ func NewTexture(width, height int) (img wandi.Image, err error) {
 	if tex.Sprite == nil {
 		return nil, errors.New("sfml.NewTexture: unable to create sprite")
 	}
-	t := C.sfRenderTexture_getTexture(tex.RenderTex)
-	C.sfSprite_setTexture(tex.Sprite, t, C.sfTrue)
+	C.sfSprite_setTexture(tex.Sprite, tex.getTex(), C.sfTrue)
 	return tex, nil
+}
+
+// getTex returns the GPU texture associated with the rendering texture.
+func (tex *Texture) getTex() *C.sfTexture {
+	return C.sfRenderTexture_getTexture(tex.RenderTex)
 }
 
 // LoadTexture loads the provided image file and returns it as an image. The
@@ -91,6 +95,8 @@ func (dst *Texture) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle
 		C.sfSprite_setPosition(srcImg.Sprite, sfmlFloatPt(dp))
 		C.sfRenderTexture_drawSprite(dst.RenderTex, srcImg.Sprite, nil)
 		C.sfRenderTexture_display(dst.RenderTex)
+	default:
+		return fmt.Errorf("Texture.DrawRect: support for image format %T not yet implemented", src)
 	}
 
 	return nil

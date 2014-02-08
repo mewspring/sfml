@@ -32,18 +32,6 @@ func sfmlIntRect(r image.Rectangle) C.sfIntRect {
 	return rect
 }
 
-// sfmlFloatRect returns a C sfFloatRect based on the provided Go
-// image.Rectangle.
-func sfmlFloatRect(r image.Rectangle) C.sfFloatRect {
-	sfmlRect := C.sfFloatRect{
-		left:   C.float(r.Min.X),
-		top:    C.float(r.Min.Y),
-		width:  C.float(r.Dx()),
-		height: C.float(r.Dy()),
-	}
-	return sfmlRect
-}
-
 // sfmlFloatPt returns a C sfVector2f based on the provided Go image.Point.
 func sfmlFloatPt(pt image.Point) C.sfVector2f {
 	sfmlPt := C.sfVector2f{

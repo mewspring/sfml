@@ -114,7 +114,7 @@ func ReadTexture(src image.Image) (img wandi.Image, err error) {
 		width := srcImg.Rect.Dx()
 		height := srcImg.Rect.Dy()
 		if srcImg.Stride != 4*width {
-			return nil, errors.New("sfml.ReadTexture: support for subimages not yet implemented")
+			return ReadTexture(convertImage(src))
 		}
 		texture := C.sfTexture_create(C.uint(width), C.uint(height))
 		defer C.sfTexture_destroy(texture)
@@ -129,11 +129,12 @@ func ReadTexture(src image.Image) (img wandi.Image, err error) {
 }
 
 // convertImage converts the provided src image to a NRGBA image and returns it.
-func convertImage(src image.Image) (dst *image.NRGBA) {
+func convertImage(src image.Image) (dst *image.RGBA) {
 	start := time.Now()
-	dr := src.Bounds()
-	dst = image.NewNRGBA(dr)
-	draw.Draw(dst, dr, src, image.ZP, draw.Src)
+	bounds := src.Bounds()
+	dr := image.Rect(0, 0, bounds.Dx(), bounds.Dy())
+	dst = image.NewRGBA(dr)
+	draw.Draw(dst, dr, src, bounds.Min, draw.Src)
 	log.Println("convertImage: fallback finished in:", time.Since(start))
 	return dst
 }

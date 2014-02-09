@@ -14,7 +14,7 @@ import (
 
 // WriteFile writes the texture to an image file.
 func (tex *Texture) WriteFile(filePath string) (err error) {
-	img := C.sfTexture_copyToImage(tex.getTex())
+	img := C.sfTexture_copyToImage(tex.getNative())
 	if img == nil {
 		return errors.New("Texture.WriteFile: unable to create image of texture")
 	}

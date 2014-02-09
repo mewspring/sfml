@@ -33,7 +33,15 @@ type Texture struct {
 //
 // Note: The Free method of the image should be called when finished using it.
 func NewTexture(width, height int) (img wandi.Image, err error) {
-	tex := new(Texture)
+	return newTexture(width, height)
+}
+
+// newTexture returns a new image of the specified dimensions. The texture is
+// stored in GPU memory.
+//
+// Note: The Free method of the image should be called when finished using it.
+func newTexture(width, height int) (tex *Texture, err error) {
+	tex = new(Texture)
 	tex.RenderTex = C.sfRenderTexture_create(C.uint(width), C.uint(height), C.sfFalse)
 	if tex.RenderTex == nil {
 		return nil, errors.New("sfml.NewTexture: unable to create texture")
@@ -42,12 +50,12 @@ func NewTexture(width, height int) (img wandi.Image, err error) {
 	if tex.Sprite == nil {
 		return nil, errors.New("sfml.NewTexture: unable to create sprite")
 	}
-	C.sfSprite_setTexture(tex.Sprite, tex.getTex(), C.sfTrue)
+	C.sfSprite_setTexture(tex.Sprite, tex.getNative(), C.sfTrue)
 	return tex, nil
 }
 
-// getTex returns the GPU texture associated with the rendering texture.
-func (tex *Texture) getTex() *C.sfTexture {
+// getNative returns the GPU texture associated with the rendering texture.
+func (tex *Texture) getNative() *C.sfTexture {
 	return C.sfRenderTexture_getTexture(tex.RenderTex)
 }
 
@@ -56,7 +64,34 @@ func (tex *Texture) getTex() *C.sfTexture {
 //
 // Note: The Free method of the image should be called when finished using it.
 func LoadTexture(filePath string) (img wandi.Image, err error) {
-	panic("sfml.LoadTexture: not yet implemented.")
+	// Load source texture.
+	texture := C.sfTexture_createFromFile(C.CString(filePath), nil)
+	if texture == nil {
+		return nil, fmt.Errorf("sfml.LoadTexture: unable to load %q", filePath)
+	}
+	defer C.sfTexture_destroy(texture)
+
+	// Create source sprite for source texture.
+	sprite := C.sfSprite_create()
+	if sprite == nil {
+		return nil, errors.New("sfml.LoadTexture: unable to create sprite")
+	}
+	defer C.sfSprite_destroy(sprite)
+	C.sfSprite_setTexture(sprite, texture, C.sfTrue)
+
+	// Create rendering texture.
+	size := C.sfTexture_getSize(texture)
+	width, height := int(size.x), int(size.y)
+	tex, err := newTexture(width, height)
+	if err != nil {
+		return nil, err
+	}
+
+	// Draw the source sprite onto the rendering texture.
+	C.sfRenderTexture_drawSprite(tex.RenderTex, sprite, nil)
+	C.sfRenderTexture_display(tex.RenderTex)
+
+	return tex, nil
 }
 
 // ReadTexture reads the provided image, converts it to the standard image
@@ -97,13 +132,20 @@ func (dst *Texture) Draw(dp image.Point, src wandi.Image) (err error) {
 func (dst *Texture) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
 	switch srcImg := src.(type) {
 	case *Texture:
-		C.sfSprite_setTextureRect(srcImg.Sprite, sfmlIntRect(sr))
-		C.sfSprite_setPosition(srcImg.Sprite, sfmlFloatPt(dp))
-		C.sfRenderTexture_drawSprite(dst.RenderTex, srcImg.Sprite, nil)
-		C.sfRenderTexture_display(dst.RenderTex)
+		drawRectSprite(dst.RenderTex, dp, srcImg.Sprite, sr)
 	default:
 		return fmt.Errorf("Texture.DrawRect: support for image format %T not yet implemented", src)
 	}
 
 	return nil
+}
+
+// drawRectSprite fills the destination rectangle dr of the dst SFML render
+// texture with corresponding pixels from the src SFML sprite starting at the
+// source point sp.
+func drawRectSprite(dst *C.sfRenderTexture, dp image.Point, src *C.sfSprite, sr image.Rectangle) {
+	C.sfSprite_setTextureRect(src, sfmlIntRect(sr))
+	C.sfSprite_setPosition(src, sfmlFloatPt(dp))
+	C.sfRenderTexture_drawSprite(dst, src, nil)
+	C.sfRenderTexture_display(dst)
 }

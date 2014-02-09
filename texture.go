@@ -13,6 +13,10 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	"image/draw"
+	"log"
+	"time"
+	"unsafe"
 
 	"github.com/mewmew/wandi"
 )
@@ -71,10 +75,16 @@ func LoadTexture(filePath string) (img wandi.Image, err error) {
 	}
 	defer C.sfTexture_destroy(texture)
 
+	return newRenderTexture(texture)
+}
+
+// newRenderTexture creates a new SFML render texture based on the provided SFML
+// texture.
+func newRenderTexture(texture *C.sfTexture) (tex *Texture, err error) {
 	// Create source sprite for source texture.
 	sprite := C.sfSprite_create()
 	if sprite == nil {
-		return nil, errors.New("sfml.LoadTexture: unable to create sprite")
+		return nil, errors.New("sfml.newRenderTexture: unable to create sprite")
 	}
 	defer C.sfSprite_destroy(sprite)
 	C.sfSprite_setTexture(sprite, texture, C.sfTrue)
@@ -82,7 +92,7 @@ func LoadTexture(filePath string) (img wandi.Image, err error) {
 	// Create rendering texture.
 	size := C.sfTexture_getSize(texture)
 	width, height := int(size.x), int(size.y)
-	tex, err := newTexture(width, height)
+	tex, err = newTexture(width, height)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +109,33 @@ func LoadTexture(filePath string) (img wandi.Image, err error) {
 //
 // Note: The Free method of the texture should be called when finished using it.
 func ReadTexture(src image.Image) (img wandi.Image, err error) {
-	panic("sfml.ReadTexture: not yet implemented.")
+	switch srcImg := src.(type) {
+	case *image.RGBA:
+		width := srcImg.Rect.Dx()
+		height := srcImg.Rect.Dy()
+		if srcImg.Stride != 4*width {
+			return nil, errors.New("sfml.ReadTexture: support for subimages not yet implemented")
+		}
+		texture := C.sfTexture_create(C.uint(width), C.uint(height))
+		defer C.sfTexture_destroy(texture)
+		pix := (*C.sfUint8)(unsafe.Pointer(&srcImg.Pix[0]))
+		C.sfTexture_updateFromPixels(texture, pix, C.uint(width), C.uint(height), 0, 0)
+
+		return newRenderTexture(texture)
+	default:
+		log.Printf("sfml.ReadTexture: using fallback for non-NRGBA image format %T.\n", src)
+		return ReadTexture(convertImage(src))
+	}
+}
+
+// convertImage converts the provided src image to a NRGBA image and returns it.
+func convertImage(src image.Image) (dst *image.NRGBA) {
+	start := time.Now()
+	dr := src.Bounds()
+	dst = image.NewNRGBA(dr)
+	draw.Draw(dst, dr, src, image.ZP, draw.Src)
+	log.Println("convertImage: fallback finished in:", time.Since(start))
+	return dst
 }
 
 // Free frees the texture.

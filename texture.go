@@ -28,18 +28,18 @@ type Texture struct {
 
 // TODO(u): Provide more detailed error messages if possible.
 
-// NewTexture returns a new image of the specified dimensions. The texture is
+// NewTexture returns a new texture of the specified dimensions. The texture is
 // stored in GPU memory.
 //
-// Note: The Free method of the image should be called when finished using it.
+// Note: The Free method of the texture should be called when finished using it.
 func NewTexture(width, height int) (img wandi.Image, err error) {
 	return newTexture(width, height)
 }
 
-// newTexture returns a new image of the specified dimensions. The texture is
+// newTexture returns a new texture of the specified dimensions. The texture is
 // stored in GPU memory.
 //
-// Note: The Free method of the image should be called when finished using it.
+// Note: The Free method of the texture should be called when finished using it.
 func newTexture(width, height int) (tex *Texture, err error) {
 	tex = new(Texture)
 	tex.RenderTex = C.sfRenderTexture_create(C.uint(width), C.uint(height), C.sfFalse)
@@ -59,10 +59,10 @@ func (tex *Texture) getNative() *C.sfTexture {
 	return C.sfRenderTexture_getTexture(tex.RenderTex)
 }
 
-// LoadTexture loads the provided image file and returns it as an image. The
+// LoadTexture loads the provided image file and returns it as a texture. The
 // texture is stored in GPU memory.
 //
-// Note: The Free method of the image should be called when finished using it.
+// Note: The Free method of the texture should be called when finished using it.
 func LoadTexture(filePath string) (img wandi.Image, err error) {
 	// Load source texture.
 	texture := C.sfTexture_createFromFile(C.CString(filePath), nil)
@@ -94,27 +94,27 @@ func LoadTexture(filePath string) (img wandi.Image, err error) {
 	return tex, nil
 }
 
-// ReadTexture reads the provided image, converts it to the standard image
-// format of this library and returns it. The texture is stored in GPU memory.
+// ReadTexture reads the provided image, converts it to a texture and returns
+// it. The texture is stored in GPU memory.
 //
-// Note: The Free method of the image should be called when finished using it.
+// Note: The Free method of the texture should be called when finished using it.
 func ReadTexture(src image.Image) (img wandi.Image, err error) {
 	panic("sfml.ReadTexture: not yet implemented.")
 }
 
-// Free frees the image.
+// Free frees the texture.
 func (tex *Texture) Free() {
 	C.sfSprite_destroy(tex.Sprite)
 	C.sfRenderTexture_destroy(tex.RenderTex)
 }
 
-// Width returns the width of the image.
+// Width returns the width of the texture.
 func (tex *Texture) Width() int {
 	size := C.sfRenderTexture_getSize(tex.RenderTex)
 	return int(size.x)
 }
 
-// Height returns the height of the image.
+// Height returns the height of the texture.
 func (tex *Texture) Height() int {
 	size := C.sfRenderTexture_getSize(tex.RenderTex)
 	return int(size.y)

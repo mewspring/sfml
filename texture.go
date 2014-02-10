@@ -20,6 +20,7 @@ import (
 	"unsafe"
 
 	"github.com/mewmew/wandi"
+	"github.com/mewmew/wandi/wandiutil"
 )
 
 // A Texture is a mutable collection of pixels, which is stored in GPU memory.
@@ -35,7 +36,7 @@ type Texture struct {
 // texture is stored in GPU memory.
 //
 // Note: The Free method of the texture should be called when finished using it.
-func NewTexture(width, height int) (img wandi.Image, err error) {
+func NewTexture(width, height int) (img wandiutil.ImageClearFreer, err error) {
 	return newTexture(width, height)
 }
 
@@ -70,7 +71,7 @@ func (tex *Texture) getNative() *C.sfTexture {
 // texture. The texture is stored in GPU memory.
 //
 // Note: The Free method of the texture should be called when finished using it.
-func LoadTexture(filePath string) (img wandi.Image, err error) {
+func LoadTexture(filePath string) (img wandiutil.ImageClearFreer, err error) {
 	// Load source texture.
 	texture := C.sfTexture_createFromFile(C.CString(filePath), nil)
 	if texture == nil {
@@ -111,7 +112,7 @@ func createRenderTexture(texture *C.sfTexture) (tex *Texture, err error) {
 // returns it. The texture is stored in GPU memory.
 //
 // Note: The Free method of the texture should be called when finished using it.
-func ReadTexture(src image.Image) (img wandi.Image, err error) {
+func ReadTexture(src image.Image) (img wandiutil.ImageClearFreer, err error) {
 	switch srcImg := src.(type) {
 	case *image.RGBA:
 		width, height := srcImg.Rect.Dx(), srcImg.Rect.Dy()

@@ -1,7 +1,7 @@
 // TODO(u): This file is intended to facilitate development. Remove it when no
 // longer needed.
 
-package sfml
+package texture
 
 // #include <SFML/Graphics.h>
 import "C"

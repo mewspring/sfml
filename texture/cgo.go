@@ -1,4 +1,4 @@
-package sfml
+package texture
 
 // #cgo LDFLAGS: -lcsfml-graphics
 // #include <SFML/Graphics.h>

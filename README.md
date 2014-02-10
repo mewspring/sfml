@@ -17,10 +17,11 @@ Documentation
 
 Documentation provided by GoDoc.
 
-- [sfml][]: handles image drawing operations.
+- sfml
+   - [texture][sfml/texture]: handles hardware accelerated image drawing operations.
    - [window][sfml/window]: handles window creation, drawing and events.
 
-[sfml]: http://godoc.org/github.com/mewmew/sfml
+[sfml/texture]: http://godoc.org/github.com/mewmew/sfml/texture
 [sfml/window]: http://godoc.org/github.com/mewmew/sfml/window
 
 public domain

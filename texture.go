@@ -13,6 +13,7 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	"image/color"
 	"image/draw"
 	"log"
 	"time"
@@ -155,6 +156,11 @@ func (tex *Texture) Width() int {
 func (tex *Texture) Height() int {
 	size := C.sfRenderTexture_getSize(tex.RenderTex)
 	return int(size.y)
+}
+
+// Clear clears the texture and fills it with the provided color.
+func (tex *Texture) Clear(c color.Color) {
+	C.sfRenderTexture_clear(tex.RenderTex, sfmlColor(c))
 }
 
 // Draw draws the entire src image onto the dst image starting at the

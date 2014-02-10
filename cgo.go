@@ -9,7 +9,7 @@ import (
 	"image/color"
 )
 
-// sfmlColor returns a C sfColor based on the provided Go color.Color.
+// sfmlColor returns a SFML Color based on the provided Go color.Color.
 func sfmlColor(c color.Color) C.sfColor {
 	r, g, b, a := c.RGBA()
 	sfmlCol := C.sfColor{
@@ -21,7 +21,7 @@ func sfmlColor(c color.Color) C.sfColor {
 	return sfmlCol
 }
 
-// sfmlIntRect returns a C sfIntRect based on the provided Go image.Rectangle.
+// sfmlIntRect returns a SFML IntRect based on the provided Go image.Rectangle.
 func sfmlIntRect(r image.Rectangle) C.sfIntRect {
 	rect := C.sfIntRect{
 		left:   C.int(r.Min.X),
@@ -32,7 +32,7 @@ func sfmlIntRect(r image.Rectangle) C.sfIntRect {
 	return rect
 }
 
-// sfmlFloatPt returns a C sfVector2f based on the provided Go image.Point.
+// sfmlFloatPt returns a SFML Vector2f based on the provided Go image.Point.
 func sfmlFloatPt(pt image.Point) C.sfVector2f {
 	sfmlPt := C.sfVector2f{
 		x: C.float(pt.X),

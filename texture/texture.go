@@ -6,6 +6,7 @@
 // [1]: http://www.sfml-dev.org/
 package texture
 
+// #include <string.h>
 // #include <SFML/Graphics.h>
 import "C"
 
@@ -119,6 +120,7 @@ func Create(src image.Image) (img wandiutil.ImageClearFreer, err error) {
 		width, height := srcImg.Rect.Dx(), srcImg.Rect.Dy()
 		if srcImg.Stride != 4*width {
 			// Use fallback conversion for subimages.
+			log.Printf("texture.Create: using fallback for %v subimage.\n", srcImg.Rect)
 			return Create(convertImage(src))
 		}
 		// Create source texture based on the pixels of the image.
@@ -154,6 +156,28 @@ func convertImage(src image.Image) *image.RGBA {
 func (tex *Texture) Free() {
 	C.sfSprite_destroy(tex.Sprite)
 	C.sfRenderTexture_destroy(tex.RenderTex)
+}
+
+// Image converts the rendering texture to a Go image.Image and returns it.
+func (tex *Texture) Image() (img image.Image, err error) {
+	// Copy the rendering texture to a SFML image.
+	sfImg := C.sfTexture_copyToImage(tex.getNative())
+	if sfImg == nil {
+		return nil, errors.New("Texture.Image: unable to create image from texture")
+	}
+	defer C.sfImage_destroy(sfImg)
+
+	// Create a Go RGBA image based on the pixels of the SFML image.
+	pix := C.sfImage_getPixelsPtr(sfImg)
+	if pix == nil {
+		return nil, errors.New("Texture.Image: unable to locate image pixels")
+	}
+	size := C.sfImage_getSize(sfImg)
+	width, height := int(size.x), int(size.y)
+	dst := image.NewRGBA(image.Rect(0, 0, width, height))
+	C.memcpy(unsafe.Pointer(&dst.Pix[0]), unsafe.Pointer(pix), C.size_t(len(dst.Pix)))
+
+	return dst, nil
 }
 
 // Width returns the width of the texture.

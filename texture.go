@@ -1,4 +1,4 @@
-// Package sfml handles image drawing operations.
+// Package sfml handles hardware accelerated image drawing operations.
 //
 // This package uses a small subset of the features provided by the SFML library
 // version 2.1 [1].
@@ -35,7 +35,7 @@ type Texture struct {
 // NewTexture returns a new rendering texture of the specified dimensions. The
 // texture is stored in GPU memory.
 //
-// Note: The Free method of the texture should be called when finished using it.
+// Note: The Free method of the texture must be called when finished using it.
 func NewTexture(width, height int) (img wandiutil.ImageClearFreer, err error) {
 	return newTexture(width, height)
 }
@@ -43,13 +43,13 @@ func NewTexture(width, height int) (img wandiutil.ImageClearFreer, err error) {
 // newTexture returns a new rendering texture of the specified dimensions. The
 // texture is stored in GPU memory.
 //
-// Note: The Free method of the texture should be called when finished using it.
+// Note: The Free method of the texture must be called when finished using it.
 func newTexture(width, height int) (tex *Texture, err error) {
 	// Create a render texture of the specified dimensions.
 	tex = new(Texture)
 	tex.RenderTex = C.sfRenderTexture_create(C.uint(width), C.uint(height), C.sfFalse)
 	if tex.RenderTex == nil {
-		return nil, errors.New("sfml.newTexture: unable to create texture")
+		return nil, fmt.Errorf("sfml.newTexture: unable to create %dx%d rendering texture", width, height)
 	}
 
 	// Create a sprite for the rendering texture.
@@ -70,7 +70,7 @@ func (tex *Texture) getNative() *C.sfTexture {
 // LoadTexture loads the provided image file and returns it as a rendering
 // texture. The texture is stored in GPU memory.
 //
-// Note: The Free method of the texture should be called when finished using it.
+// Note: The Free method of the texture must be called when finished using it.
 func LoadTexture(filePath string) (img wandiutil.ImageClearFreer, err error) {
 	// Load source texture.
 	texture := C.sfTexture_createFromFile(C.CString(filePath), nil)
@@ -79,16 +79,17 @@ func LoadTexture(filePath string) (img wandiutil.ImageClearFreer, err error) {
 	}
 	defer C.sfTexture_destroy(texture)
 
-	return createRenderTexture(texture)
+	// Create and return a rendering texture based on the source texture.
+	return createTexture(texture)
 }
 
-// createRenderTexture creates a new SFML rendering texture based on the
-// provided SFML source texture.
-func createRenderTexture(texture *C.sfTexture) (tex *Texture, err error) {
-	// Create sprite for the source texture.
+// createTexture creates a new SFML rendering texture based on the provided SFML
+// source texture.
+func createTexture(texture *C.sfTexture) (tex *Texture, err error) {
+	// Create a sprite for the source texture.
 	sprite := C.sfSprite_create()
 	if sprite == nil {
-		return nil, errors.New("sfml.createRenderTexture: unable to create sprite")
+		return nil, errors.New("sfml.createTexture: unable to create sprite")
 	}
 	defer C.sfSprite_destroy(sprite)
 	C.sfSprite_setTexture(sprite, texture, C.sfTrue)
@@ -108,40 +109,44 @@ func createRenderTexture(texture *C.sfTexture) (tex *Texture, err error) {
 	return tex, nil
 }
 
-// ReadTexture reads the provided image, converts it to a rendering texture and
+// CreateTexture creates a new rendering texture based on the provided image and
 // returns it. The texture is stored in GPU memory.
 //
-// Note: The Free method of the texture should be called when finished using it.
-func ReadTexture(src image.Image) (img wandiutil.ImageClearFreer, err error) {
+// Note: The Free method of the texture must be called when finished using it.
+func CreateTexture(src image.Image) (img wandiutil.ImageClearFreer, err error) {
 	switch srcImg := src.(type) {
 	case *image.RGBA:
 		width, height := srcImg.Rect.Dx(), srcImg.Rect.Dy()
 		if srcImg.Stride != 4*width {
 			// Use fallback conversion for subimages.
-			return ReadTexture(convertImage(src))
+			return CreateTexture(convertImage(src))
 		}
 		// Create source texture based on the pixels of the image.
 		texture := C.sfTexture_create(C.uint(width), C.uint(height))
+		if texture == nil {
+			return nil, fmt.Errorf("sfml.CreateTexture: unable to create %dx%d source texture", width, height)
+		}
 		defer C.sfTexture_destroy(texture)
 		pix := (*C.sfUint8)(unsafe.Pointer(&srcImg.Pix[0]))
 		C.sfTexture_updateFromPixels(texture, pix, C.uint(width), C.uint(height), 0, 0)
 
-		return createRenderTexture(texture)
+		// Create and return a rendering texture based on the source texture.
+		return createTexture(texture)
 	default:
-		log.Printf("sfml.ReadTexture: using fallback for non-RGBA image format %T.\n", src)
 		// Use fallback conversion for unknown image formats.
-		return ReadTexture(convertImage(src))
+		log.Printf("sfml.CreateTexture: using fallback for non-RGBA image format %T.\n", src)
+		return CreateTexture(convertImage(src))
 	}
 }
 
 // convertImage converts the provided src image to a RGBA image and returns it.
-func convertImage(src image.Image) (dst *image.RGBA) {
+func convertImage(src image.Image) *image.RGBA {
 	start := time.Now()
 	bounds := src.Bounds()
 	dr := image.Rect(0, 0, bounds.Dx(), bounds.Dy())
-	dst = image.NewRGBA(dr)
+	dst := image.NewRGBA(dr)
 	draw.Draw(dst, dr, src, bounds.Min, draw.Src)
-	log.Println("convertImage: fallback conversion finished in:", time.Since(start))
+	log.Println("sfml.convertImage: fallback conversion finished in:", time.Since(start))
 	return dst
 }
 
@@ -180,20 +185,13 @@ func (dst *Texture) Draw(dp image.Point, src wandi.Image) (err error) {
 func (dst *Texture) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
 	switch srcImg := src.(type) {
 	case *Texture:
-		drawRectSprite(dst.RenderTex, dp, srcImg.Sprite, sr)
+		C.sfSprite_setTextureRect(srcImg.Sprite, sfmlIntRect(sr))
+		C.sfSprite_setPosition(srcImg.Sprite, sfmlFloatPt(dp))
+		C.sfRenderTexture_drawSprite(dst.RenderTex, srcImg.Sprite, nil)
+		C.sfRenderTexture_display(dst.RenderTex)
 	default:
 		return fmt.Errorf("Texture.DrawRect: support for image format %T not yet implemented", src)
 	}
 
 	return nil
-}
-
-// drawRectSprite fills the destination rectangle dr of the dst SFML render
-// texture with corresponding pixels from the src SFML sprite starting at the
-// source point sp.
-func drawRectSprite(dst *C.sfRenderTexture, dp image.Point, src *C.sfSprite, sr image.Rectangle) {
-	C.sfSprite_setTextureRect(src, sfmlIntRect(sr))
-	C.sfSprite_setPosition(src, sfmlFloatPt(dp))
-	C.sfRenderTexture_drawSprite(dst, src, nil)
-	C.sfRenderTexture_display(dst)
 }

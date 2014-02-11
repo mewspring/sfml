@@ -214,8 +214,8 @@ func (dst *Texture) Draw(dp image.Point, src wandi.Image) (err error) {
 	return dst.DrawRect(dp, src, sr)
 }
 
-// DrawRect fills the destination rectangle dr of the dst image with
-// corresponding pixels from the src image starting at the source point sp.
+// DrawRect draws a subset of the src image, as defined by the source rectangle
+// sr, onto the dst image starting at the destination point dp.
 func (dst *Texture) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
 	switch srcImg := src.(type) {
 	case *Texture:

@@ -5,12 +5,23 @@ package main
 import (
 	"image"
 	"log"
-	"path"
 
 	"github.com/mewkiz/pkg/goutil"
 	"github.com/mewkiz/pkg/imgutil"
 	"github.com/mewmew/sfml/texture"
 )
+
+// srcDir is the absolute path to the example source directory.
+var srcDir string
+
+func init() {
+	// Locate the absolute path to the example source directory.
+	var err error
+	srcDir, err = goutil.SrcDir("github.com/mewmew/sfml/examples/off-screen/")
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
 
 func main() {
 	err := render()
@@ -21,20 +32,16 @@ func main() {
 
 // render demonstrates how to perform hardware accelerated off-screen rendering.
 func render() (err error) {
-	srcDir, err := goutil.SrcDir("github.com/mewmew/sfml/examples/off-screen")
-	if err != nil {
-		return err
-	}
 
 	// Load background texture.
-	bg, err := texture.Load(path.Join(srcDir, "data/bg.png"))
+	bg, err := texture.Load(srcDir + "/data/bg.png")
 	if err != nil {
 		return err
 	}
 	defer bg.Free()
 
 	// Load foreground texture.
-	fg, err := texture.Load(path.Join(srcDir, "data/fg.png"))
+	fg, err := texture.Load(srcDir + "/data/fg.png")
 	if err != nil {
 		return err
 	}

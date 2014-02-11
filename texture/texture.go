@@ -24,8 +24,8 @@ import (
 	"github.com/mewmew/wandi/wandiutil"
 )
 
-// Image is the interface that encapsulates the operations available on the
-// render textures of this package.
+// Image is the interface which encapsulates the render texture operations made
+// available through this package.
 type Image interface {
 	wandi.Image
 	wandiutil.Clearer

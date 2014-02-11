@@ -17,7 +17,7 @@ var srcDir string
 func init() {
 	// Locate the absolute path to the example source directory.
 	var err error
-	srcDir, err = goutil.SrcDir("github.com/mewmew/sfml/examples/off-screen/")
+	srcDir, err = goutil.SrcDir("github.com/mewmew/sfml/examples/off-screen")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -47,10 +47,10 @@ func render() (err error) {
 	defer fg.Free()
 
 	// DrawRect draws a subset of the foreground texture, as defined by the
-	// source rectangle (90, 90, 250, 250), onto the background texture starting
-	// at the destination point (20, 90).
-	dp := image.Pt(20, 90)
-	sr := image.Rect(90, 90, 250, 250)
+	// source rectangle (90, 90, 225, 225), onto the background texture starting
+	// at the destination point (10, 10).
+	dp := image.Pt(10, 10)
+	sr := image.Rect(90, 90, 225, 225)
 	err = bg.DrawRect(dp, fg, sr)
 	if err != nil {
 		return err

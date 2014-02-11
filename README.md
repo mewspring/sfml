@@ -25,6 +25,14 @@ Documentation provided by GoDoc.
 [sfml/texture]: http://godoc.org/github.com/mewmew/sfml/texture
 [sfml/window]: http://godoc.org/github.com/mewmew/sfml/window
 
+Examples
+--------
+
+The `off-screen` command demonstrates how to perform hardware accelerated
+off-screen rendering.
+
+	go get github.com/mewmew/sfml/examples/off-screen
+
 public domain
 -------------
 

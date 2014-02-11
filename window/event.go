@@ -1,6 +1,6 @@
 package window
 
-// #include <SFML/Graphics/RenderWindow.h>
+// #include <SFML/Graphics.h>
 //
 // sfEventType getEventType(sfEvent e) {
 //    return e.type;
@@ -41,39 +41,44 @@ import (
 // PollEvent returns a pending event from the event queue or nil if the queue
 // was empty. Note that more than one event may be present in the event queue.
 //
-// Note: PollEvent must be called from the same thread that created the window.
+// Note: The main thread must be used for both window creation and event
+// handling. It is perfectly fine to use separate threads for rendering and
+// event handling, as long as all event handling takes place in the main thread.
 //
 // Note: Some internal window events of SFML depend on calls to PollEvent to
 // take effect. For instance a call to SetTitle will not update the window title
 // until the next call of PollEvent.
-func (sfmlWin *sfmlWindow) PollEvent() (event we.Event) {
+func (win *Window) PollEvent() (event we.Event) {
 	// Poll the event queue until we locate a non-nil event or the queue is
 	// empty.
-	var sfmlEvent C.sfEvent
+	var sfEvent C.sfEvent
 	for {
-		if C.sfRenderWindow_pollEvent(sfmlWin.w, &sfmlEvent) == C.sfFalse {
+		if C.sfRenderWindow_pollEvent(win.Win, &sfEvent) == C.sfFalse {
 			// Return nil if the event queue is empty.
 			return nil
 		}
-		event = weEvent(sfmlEvent)
+		event = weEvent(sfEvent)
 		if event != nil {
 			return event
 		}
 	}
 }
 
+// TODO(u): Figure out a better way to handle the previous cursor position. The
+// current way is racy.
+
 // prev represents the previously recorded cursor position.
 var prev image.Point
 
 // weEvent returns the we.Event corresponding to the provided SFML event.
-func weEvent(sfmlEvent C.sfEvent) (event we.Event) {
-	typ := C.getEventType(sfmlEvent)
+func weEvent(sfEvent C.sfEvent) (event we.Event) {
+	typ := C.getEventType(sfEvent)
 	switch typ {
 	// Window events.
 	case C.sfEvtClosed:
 		return we.Close{}
 	case C.sfEvtResized:
-		e := C.getSizeEvent(sfmlEvent)
+		e := C.getSizeEvent(sfEvent)
 		event = we.Resize{
 			Width:  int(e.width),
 			Height: int(e.height),
@@ -82,18 +87,18 @@ func weEvent(sfmlEvent C.sfEvent) (event we.Event) {
 
 	// Keyboard events.
 	case C.sfEvtTextEntered:
-		e := C.getTextEvent(sfmlEvent)
+		e := C.getTextEvent(sfEvent)
 		event = we.KeyRune(e.unicode)
 		return event
 	case C.sfEvtKeyPressed:
-		e := C.getKeyEvent(sfmlEvent)
+		e := C.getKeyEvent(sfEvent)
 		event = we.KeyPress{
 			Key: weKey(e.code),
 			Mod: weMod(e),
 		}
 		return event
 	case C.sfEvtKeyReleased:
-		e := C.getKeyEvent(sfmlEvent)
+		e := C.getKeyEvent(sfEvent)
 		event = we.KeyRelease{
 			Key: weKey(e.code),
 			Mod: weMod(e),
@@ -102,7 +107,7 @@ func weEvent(sfmlEvent C.sfEvent) (event we.Event) {
 
 	// Mouse events.
 	case C.sfEvtMouseWheelMoved:
-		e := C.getMouseWheelEvent(sfmlEvent)
+		e := C.getMouseWheelEvent(sfEvent)
 		pt := image.Pt(int(e.x), int(e.y))
 		event = we.ScrollY{
 			Point: pt,
@@ -111,7 +116,7 @@ func weEvent(sfmlEvent C.sfEvent) (event we.Event) {
 		}
 		return event
 	case C.sfEvtMouseButtonPressed:
-		e := C.getMouseButtonEvent(sfmlEvent)
+		e := C.getMouseButtonEvent(sfEvent)
 		pt := image.Pt(int(e.x), int(e.y))
 		event = we.MousePress{
 			Point:  pt,
@@ -120,7 +125,7 @@ func weEvent(sfmlEvent C.sfEvent) (event we.Event) {
 		}
 		return event
 	case C.sfEvtMouseButtonReleased:
-		e := C.getMouseButtonEvent(sfmlEvent)
+		e := C.getMouseButtonEvent(sfEvent)
 		pt := image.Pt(int(e.x), int(e.y))
 		event = we.MouseRelease{
 			Point:  pt,
@@ -129,8 +134,8 @@ func weEvent(sfmlEvent C.sfEvent) (event we.Event) {
 		}
 		return event
 	case C.sfEvtMouseMoved:
-		// TODO(u): implement MouseDrag event.
-		e := C.getMouseMoveEvent(sfmlEvent)
+		// TODO(u): Implement we.MouseDrag event.
+		e := C.getMouseMoveEvent(sfEvent)
 		pt := image.Pt(int(e.x), int(e.y))
 		event = we.MouseMove{
 			Point: pt,
@@ -144,7 +149,7 @@ func weEvent(sfmlEvent C.sfEvent) (event we.Event) {
 		return we.MouseEnter(false)
 
 	default:
-		log.Printf("weEvent: event %d not yet implemented.\n", typ)
+		log.Printf("window.weEvent: support for SFML event type %d not yet implemented.\n", typ)
 	}
 
 	// Ignore event.

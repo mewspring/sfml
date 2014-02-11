@@ -1,6 +1,6 @@
 package window
 
-// #include <SFML/Window/Event.h>
+// #include <SFML/Window.h>
 import "C"
 
 import (
@@ -251,6 +251,7 @@ func weKey(code C.sfKeyCode) we.Key {
 	case C.sfKeyPause:
 		return we.KeyPause
 	}
+
 	// Unknown key.
 	return 0
 }

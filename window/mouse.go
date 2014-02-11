@@ -1,6 +1,6 @@
 package window
 
-// #include <SFML/Window/Mouse.h>
+// #include <SFML/Window.h>
 import "C"
 
 import (

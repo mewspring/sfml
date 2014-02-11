@@ -12,6 +12,9 @@ import (
 )
 
 // WriteFile writes the texture to an image file.
+//
+// TODO(u): This method is intended to facilitate development. Remove it when no
+// longer needed.
 func (tex *Texture) WriteFile(filePath string) (err error) {
 	img := C.sfTexture_copyToImage(tex.getNative())
 	if img == nil {

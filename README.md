@@ -8,9 +8,9 @@ sfml
 ====
 
 This project implements window creation, event handling and image drawing using
-[SFML][1] version 2.1.
+[SFML][] version 2.1.
 
-[1]: http://www.sfml-dev.org/
+[SFML]: http://www.sfml-dev.org/
 
 Documentation
 -------------
@@ -18,7 +18,8 @@ Documentation
 Documentation provided by GoDoc.
 
 - sfml
-   - [texture][sfml/texture]: handles hardware accelerated image drawing operations.
+   - [texture][sfml/texture]: handles hardware accelerated image drawing
+   operations.
    - [window][sfml/window]: handles window creation, drawing and events.
 
 [sfml/texture]: http://godoc.org/github.com/mewmew/sfml/texture

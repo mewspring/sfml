@@ -150,8 +150,10 @@ func weEvent(sfEvent C.sfEvent) (event we.Event) {
 
 	default:
 		log.Printf("window.weEvent: support for SFML event type %d not yet implemented.\n", typ)
+		return nil
 	}
 
 	// Ignore event.
+	log.Printf("window.weEvent: ignoring SFML event of type %d.\n", typ)
 	return nil
 }

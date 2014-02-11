@@ -18,6 +18,17 @@ import (
 	"github.com/mewmew/wandi"
 )
 
+// Style specifies the style and behavior of windows.
+type Style uint32
+
+// Window styles.
+const (
+	// Fixes states that the window cannot be resized.
+	Fixed Style = iota
+	// FullScreen states that the window is in full screen mode.
+	FullScreen
+)
+
 // A Window represents a graphical window capable of handling draw operations
 // and window events. It implements the wandi.Window interface.
 type Window struct {
@@ -25,14 +36,15 @@ type Window struct {
 	Win *C.sfRenderWindow
 }
 
-// Open opens a window with the specified dimensions.
+// Open opens a window with the specified dimensions and an optional window
+// style. By default the window is resizeable and not in full screen mode.
 //
 // Note: The main thread must be used for both window creation and event
 // handling. It is perfectly fine to use separate threads for rendering and
 // event handling, as long as all event handling takes place in the main thread.
 //
 // Note: The Close method of the window must be called when finished using it.
-func Open(width, height int) (win wandi.Window, err error) {
+func Open(width, height int, style ...Style) (win wandi.Window, err error) {
 	sfWin := new(Window)
 	mode := C.sfVideoMode{
 		width:        C.uint(width),
@@ -40,9 +52,16 @@ func Open(width, height int) (win wandi.Window, err error) {
 		bitsPerPixel: 32,
 	}
 	title := C.CString("untitled")
-	// TODO(u): Make the window style customizeable.
-	style := C.sfUint32(0)
-	sfWin.Win = C.sfRenderWindow_create(mode, title, style, nil)
+	sfStyle := C.sfUint32(C.sfDefaultStyle)
+	if len(style) > 0 {
+		switch style[0] {
+		case Fixed:
+			sfStyle &^= C.sfResize
+		case FullScreen:
+			sfStyle = C.sfFullscreen
+		}
+	}
+	sfWin.Win = C.sfRenderWindow_create(mode, title, sfStyle, nil)
 
 	// TODO(u): Enable vsync.
 	//C.sfRenderWindow_setVerticalSyncEnabled(sfWin.Win, C.sfTrue)

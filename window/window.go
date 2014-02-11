@@ -19,7 +19,7 @@ import (
 )
 
 // Style specifies the style and behavior of windows.
-type Style uint32
+type Style int
 
 // Window styles.
 const (

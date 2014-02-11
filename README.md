@@ -28,10 +28,12 @@ Documentation provided by GoDoc.
 Examples
 --------
 
-The `off-screen` command demonstrates how to perform hardware accelerated
-off-screen rendering.
+The [off-screen][examples/off-screen] command demonstrates how to perform
+hardware accelerated off-screen rendering.
 
 	go get github.com/mewmew/sfml/examples/off-screen
+
+[examples/off-screen]: https://github.com/mewmew/sfml/blob/master/examples/off-screen/off-screen.go
 
 public domain
 -------------

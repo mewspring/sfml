@@ -44,6 +44,13 @@ event loop.
 
 [examples/tiny]: https://github.com/mewmew/sfml/blob/master/examples/tiny/tiny.go#L38
 
+The [many][examples/many] command demonstrates how to create and handle more
+than one window at once.
+
+	go get github.com/mewmew/sfml/examples/many
+
+[examples/many]: https://github.com/mewmew/sfml/blob/master/examples/many/many.go#L36
+
 public domain
 -------------
 

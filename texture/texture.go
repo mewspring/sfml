@@ -24,6 +24,15 @@ import (
 	"github.com/mewmew/wandi/wandiutil"
 )
 
+// Image is the interface that encapsulates the operations available on the
+// render textures of this package.
+type Image interface {
+	wandi.Image
+	wandiutil.Clearer
+	wandiutil.Freer
+	wandiutil.Imager
+}
+
 // A Texture is a mutable collection of pixels, which is stored in GPU memory.
 // It implements the wandi.Image interface.
 type Texture struct {
@@ -37,7 +46,7 @@ type Texture struct {
 // is stored in GPU memory.
 //
 // Note: The Free method of the texture must be called when finished using it.
-func New(width, height int) (img wandiutil.ImageClearFreer, err error) {
+func New(width, height int) (img Image, err error) {
 	return newTexture(width, height)
 }
 
@@ -72,7 +81,7 @@ func (tex *Texture) getNative() *C.sfTexture {
 // texture is stored in GPU memory.
 //
 // Note: The Free method of the texture must be called when finished using it.
-func Load(filePath string) (img wandiutil.ImageClearFreer, err error) {
+func Load(filePath string) (img Image, err error) {
 	// Load source texture.
 	texture := C.sfTexture_createFromFile(C.CString(filePath), nil)
 	if texture == nil {
@@ -114,7 +123,7 @@ func create(texture *C.sfTexture) (tex *Texture, err error) {
 // returns it. The texture is stored in GPU memory.
 //
 // Note: The Free method of the texture must be called when finished using it.
-func Create(src image.Image) (img wandiutil.ImageClearFreer, err error) {
+func Create(src image.Image) (img Image, err error) {
 	switch srcImg := src.(type) {
 	case *image.RGBA:
 		width, height := srcImg.Rect.Dx(), srcImg.Rect.Dy()
@@ -158,7 +167,8 @@ func (tex *Texture) Free() {
 	C.sfRenderTexture_destroy(tex.RenderTex)
 }
 
-// Image converts the rendering texture to a Go image.Image and returns it.
+// Image converts the rendering texture to an image.Image representation and
+// returns it.
 func (tex *Texture) Image() (img image.Image, err error) {
 	// Copy the rendering texture to a SFML image.
 	sfImg := C.sfTexture_copyToImage(tex.getNative())

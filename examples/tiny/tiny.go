@@ -14,13 +14,13 @@ import (
 	"github.com/mewmew/we"
 )
 
-// srcDir is the absolute path to the example source directory.
-var srcDir string
+// dataDir is the absolute path to the example source directory.
+var dataDir string
 
 func init() {
 	// Locate the absolute path to the example source directory.
 	var err error
-	srcDir, err = goutil.SrcDir("github.com/mewmew/sfml/examples/tiny")
+	dataDir, err = goutil.SrcDir("github.com/mewmew/sfml/examples/data")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -44,14 +44,14 @@ func tiny() (err error) {
 	defer win.Close()
 
 	// Load background texture.
-	bg, err := texture.Load(srcDir + "/data/bg.png")
+	bg, err := texture.Load(dataDir + "/bg.png")
 	if err != nil {
 		return err
 	}
 	defer bg.Free()
 
 	// Load foreground texture.
-	fg, err := texture.Load(srcDir + "/data/fg.png")
+	fg, err := texture.Load(dataDir + "/fg.png")
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func tiny() (err error) {
 	for {
 		// Poll events until the event queue is empty.
 		for e := win.PollEvent(); e != nil; e = win.PollEvent() {
-			fmt.Printf("%#v: %v\n", e, e)
+			fmt.Printf("%T: %v\n", e, e)
 			switch e.(type) {
 			case we.Close:
 				// Close the window.

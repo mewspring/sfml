@@ -11,13 +11,13 @@ import (
 	"github.com/mewmew/sfml/texture"
 )
 
-// srcDir is the absolute path to the example source directory.
-var srcDir string
+// dataDir is the absolute path to the example source directory.
+var dataDir string
 
 func init() {
 	// Locate the absolute path to the example source directory.
 	var err error
-	srcDir, err = goutil.SrcDir("github.com/mewmew/sfml/examples/off-screen")
+	dataDir, err = goutil.SrcDir("github.com/mewmew/sfml/examples/data")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -33,14 +33,14 @@ func main() {
 // render demonstrates how to perform hardware accelerated off-screen rendering.
 func render() (err error) {
 	// Load background texture.
-	bg, err := texture.Load(srcDir + "/data/bg.png")
+	bg, err := texture.Load(dataDir + "/bg.png")
 	if err != nil {
 		return err
 	}
 	defer bg.Free()
 
 	// Load foreground texture.
-	fg, err := texture.Load(srcDir + "/data/fg.png")
+	fg, err := texture.Load(dataDir + "/fg.png")
 	if err != nil {
 		return err
 	}

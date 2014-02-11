@@ -18,8 +18,7 @@ Documentation
 Documentation provided by GoDoc.
 
 - sfml
-   - [texture][sfml/texture]: handles hardware accelerated image drawing
-   operations.
+   - [texture][sfml/texture]: handles hardware accelerated image drawing.
    - [window][sfml/window]: handles window creation, drawing and events.
 
 [sfml/texture]: http://godoc.org/github.com/mewmew/sfml/texture

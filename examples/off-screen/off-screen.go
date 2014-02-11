@@ -32,7 +32,6 @@ func main() {
 
 // render demonstrates how to perform hardware accelerated off-screen rendering.
 func render() (err error) {
-
 	// Load background texture.
 	bg, err := texture.Load(srcDir + "/data/bg.png")
 	if err != nil {

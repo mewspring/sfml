@@ -33,7 +33,7 @@ hardware accelerated off-screen rendering.
 
 	go get github.com/mewmew/sfml/examples/off-screen
 
-[examples/off-screen]: https://github.com/mewmew/sfml/blob/master/examples/off-screen/off-screen.go
+[examples/off-screen]: https://github.com/mewmew/sfml/blob/master/examples/off-screen/off-screen.go#L34
 
 public domain
 -------------

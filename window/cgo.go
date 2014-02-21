@@ -47,5 +47,7 @@ func utf32(s string) *C.sfUint32 {
 	for _, r := range s {
 		s32 = append(s32, C.sfUint32(r))
 	}
+	// End with NULL byte.
+	s32 = append(s32, 0)
 	return &s32[0]
 }

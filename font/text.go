@@ -43,8 +43,8 @@ func (text *Text) Free() {
 	C.sfText_destroy(text.Text)
 }
 
-// Set sets the text of the graphical text entry.
-func (text *Text) Set(s string) {
+// SetText sets the text of the graphical text entry.
+func (text *Text) SetText(s string) {
 	C.sfText_setUnicodeString(text.Text, utf32(s))
 }
 

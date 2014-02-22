@@ -18,8 +18,8 @@ Documentation
 Documentation provided by GoDoc.
 
 - sfml
-   - [font][sfml/font]: handles text rendering based on the size, style and
-   color of fonts.
+   - [font][sfml/font]: handles graphical text entries with customizable font
+   size, style and color.
    - [texture][sfml/texture]: handles hardware accelerated image drawing.
    - [window][sfml/window]: handles window creation, drawing and events.
 

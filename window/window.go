@@ -14,6 +14,7 @@ import (
 	"image"
 	"image/color"
 
+	"github.com/mewmew/sfml/font"
 	"github.com/mewmew/sfml/texture"
 	"github.com/mewmew/wandi"
 )
@@ -107,13 +108,18 @@ func (win *Window) Clear(c color.Color) {
 // Draw draws the entire src image onto the window starting at the destination
 // point dp.
 func (win *Window) Draw(dp image.Point, src wandi.Image) (err error) {
-	return win.DrawRect(dp, src, image.Rect(0, 0, src.Width(), src.Height()))
+	sr := image.Rect(0, 0, src.Width(), src.Height())
+	return win.DrawRect(dp, src, sr)
 }
 
 // DrawRect draws a subset of the src image, as defined by the source rectangle
 // sr, onto the window starting at the destination point dp.
 func (win *Window) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
 	switch srcImg := src.(type) {
+	case *font.Text:
+		// TODO(u): Handle sr?
+		C.sfText_setPosition(srcImg.Text, sfmlFloatPt(dp))
+		C.sfRenderWindow_drawText(win.Win, srcImg.Text, nil)
 	case *texture.Texture:
 		C.sfSprite_setTextureRect(srcImg.Sprite, sfmlIntRect(sr))
 		C.sfSprite_setPosition(srcImg.Sprite, sfmlFloatPt(dp))

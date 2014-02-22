@@ -20,6 +20,7 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/mewmew/sfml/font"
 	"github.com/mewmew/wandi"
 	"github.com/mewmew/wandi/wandiutil"
 )
@@ -218,6 +219,11 @@ func (dst *Texture) Draw(dp image.Point, src wandi.Image) (err error) {
 // sr, onto the dst image starting at the destination point dp.
 func (dst *Texture) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
 	switch srcImg := src.(type) {
+	case *font.Text:
+		// TODO(u): Handle sr?
+		C.sfText_setPosition(srcImg.Text, sfmlFloatPt(dp))
+		C.sfRenderTexture_drawText(dst.RenderTex, srcImg.Text, nil)
+		C.sfRenderTexture_display(dst.RenderTex)
 	case *Texture:
 		C.sfSprite_setTextureRect(srcImg.Sprite, sfmlIntRect(sr))
 		C.sfSprite_setPosition(srcImg.Sprite, sfmlFloatPt(dp))

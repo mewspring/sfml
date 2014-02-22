@@ -60,6 +60,17 @@ than one window at once.
 
 [examples/many]: https://github.com/mewmew/sfml/blob/master/examples/many/many.go#L36
 
+### fonts
+
+The [fonts][examples/fonts] command demonstrates how to render text using TTF
+fonts.
+
+	go get github.com/mewmew/sfml/examples/fonts
+
+![Screenshot - fonts](https://raw.github.com/mewmew/sfml/master/examples/fonts/fonts.png)
+
+[examples/fonts]: https://github.com/mewmew/sfml/blob/master/examples/fonts/fonts.go#L38
+
 public domain
 -------------
 

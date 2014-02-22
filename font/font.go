@@ -100,14 +100,9 @@ func (f *Font) Render(s string) (img texture.Image, err error) {
 
 	// Ignore padding.
 	bounds := C.sfText_getGlobalBounds(f.text)
-	pt := C.sfVector2f{
-		x: -bounds.left,
-		y: -bounds.top,
-	}
-	C.sfText_setPosition(f.text, pt)
 
 	// Create a rendering texture of the same dimensions as the text.
-	tex, err := texture.New(int(bounds.width), int(bounds.height))
+	tex, err := texture.New(int(bounds.width+bounds.left), int(bounds.height+bounds.top))
 	if err != nil {
 		return nil, err
 	}

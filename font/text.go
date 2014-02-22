@@ -15,13 +15,17 @@ type Text struct {
 	Text *C.sfText
 }
 
-// NewText returns a new graphical text entry based on the provided font. The
-// default font size, style and color of the text is 12, regular (no style) and
-// black respectively.
+// NewText returns a new graphical text entry based on the provided font and any
+// optional customization arguments. The initial text, size, style and color of
+// the graphical text entry can be customized through string, int, Style and
+// color.Color arguments respectively, depending on the type of the argument.
+//
+// The default font size, style and color of the text is 12, regular (no style)
+// and black respectively.
 //
 // Note: The Free method of the graphical text entry must be called when
 // finished using it.
-func NewText(f *Font) (text *Text, err error) {
+func NewText(f *Font, args ...interface{}) (text *Text, err error) {
 	// Create a SFML text and associate the font with it.
 	text = new(Text)
 	text.Text = C.sfText_create()
@@ -34,6 +38,20 @@ func NewText(f *Font) (text *Text, err error) {
 	text.SetSize(12)
 	text.SetStyle(Regular)
 	text.SetColor(color.Black)
+
+	// Customize the text, size, style and color based on the provided arguments.
+	for _, arg := range args {
+		switch v := arg.(type) {
+		case string:
+			text.SetText(v)
+		case int:
+			text.SetSize(v)
+		case Style:
+			text.SetStyle(v)
+		case color.Color:
+			text.SetColor(v)
+		}
+	}
 
 	return text, nil
 }

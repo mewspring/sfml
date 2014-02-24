@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"runtime"
 	"time"
 
 	"github.com/mewkiz/pkg/goutil"
@@ -36,6 +37,8 @@ func main() {
 
 // fonts demonstrates how to render text using TTF fonts.
 func fonts() (err error) {
+	runtime.LockOSThread()
+
 	// Open a window with the specified dimensions.
 	win, err := window.Open(640, 480)
 	if err != nil {

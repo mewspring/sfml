@@ -86,51 +86,57 @@ func fonts() (err error) {
 	start := time.Now()
 	frames := 0.0
 
+	// 60 FPS
+	var freq float64 = 1 / 60. * 1000
+	ticker := time.NewTicker(time.Duration(freq) * time.Millisecond)
+
 	// Drawing and event loop.
 	for {
-		// Clear the window and fill it with white color.
-		win.Clear(color.White)
+		select {
+		case <-ticker.C:
 
-		// Draw the entire background texture onto the window.
-		err = win.Draw(image.ZP, bg)
-		if err != nil {
-			return err
-		}
+			// Clear the window and fill it with white color.
+			win.Clear(color.White)
 
-		// Draw the entire text onto the window starting the destination point
-		// (420, 12).
-		dp := image.Pt(420, 12)
-		err = win.Draw(dp, text)
-		if err != nil {
-			return err
-		}
+			// Draw the entire background texture onto the window.
+			err = win.Draw(image.ZP, bg)
+			if err != nil {
+				return err
+			}
 
-		// Update the text of the FPS text entry.
-		fps.SetText(getFPS(start, frames))
+			// Draw the entire text onto the window starting the destination point
+			// (420, 12).
+			dp := image.Pt(420, 12)
+			err = win.Draw(dp, text)
+			if err != nil {
+				return err
+			}
 
-		// Draw the entire FPS text entry onto the screen starting at the
-		// destination point (8, 4).
-		dp = image.Pt(8, 4)
-		err = win.Draw(dp, fps)
-		if err != nil {
-			return err
-		}
+			// Update the text of the FPS text entry.
+			fps.SetText(getFPS(start, frames))
 
-		// Display window rendering updates on the screen.
-		win.Update()
-		frames++
+			// Draw the entire FPS text entry onto the screen starting at the
+			// destination point (8, 4).
+			dp = image.Pt(8, 4)
+			err = win.Draw(dp, fps)
+			if err != nil {
+				return err
+			}
 
-		// Poll events until the event queue is empty.
-		for e := win.PollEvent(); e != nil; e = win.PollEvent() {
-			fmt.Printf("%T: %v\n", e, e)
-			switch e.(type) {
-			case we.Close:
-				// Close the window.
-				return nil
+			// Display window rendering updates on the screen.
+			win.Update()
+			frames++
+
+			// Poll events until the event queue is empty.
+			for e := win.PollEvent(); e != nil; e = win.PollEvent() {
+				fmt.Printf("%T: %v\n", e, e)
+				switch e.(type) {
+				case we.Close:
+					// Close the window.
+					return nil
+				}
 			}
 		}
-
-		time.Sleep(time.Second / 60)
 	}
 
 	return nil

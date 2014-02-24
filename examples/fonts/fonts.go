@@ -37,7 +37,11 @@ func main() {
 
 // fonts demonstrates how to render text using TTF fonts.
 func fonts() (err error) {
+	// Some operating systems require that the main thread is used for both
+	// window creation and event handling. Therefore we lock the goroutine to an
+	// OS thread.
 	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 
 	// Open a window with the specified dimensions.
 	win, err := window.Open(640, 480)
@@ -90,54 +94,52 @@ func fonts() (err error) {
 	frames := 0.0
 
 	// 60 FPS
-	var freq float64 = 1 / 60. * 1000
-	ticker := time.NewTicker(time.Duration(freq) * time.Millisecond)
+	ticker := time.NewTicker(time.Second / 60)
 
 	// Drawing and event loop.
 	for {
-		select {
-		case <-ticker.C:
+		// Cap the FPS.
+		<-ticker.C
 
-			// Clear the window and fill it with white color.
-			win.Clear(color.White)
+		// Clear the window and fill it with white color.
+		win.Clear(color.White)
 
-			// Draw the entire background texture onto the window.
-			err = win.Draw(image.ZP, bg)
-			if err != nil {
-				return err
-			}
+		// Draw the entire background texture onto the window.
+		err = win.Draw(image.ZP, bg)
+		if err != nil {
+			return err
+		}
 
-			// Draw the entire text onto the window starting the destination point
-			// (420, 12).
-			dp := image.Pt(420, 12)
-			err = win.Draw(dp, text)
-			if err != nil {
-				return err
-			}
+		// Draw the entire text onto the window starting the destination point
+		// (420, 12).
+		dp := image.Pt(420, 12)
+		err = win.Draw(dp, text)
+		if err != nil {
+			return err
+		}
 
-			// Update the text of the FPS text entry.
-			fps.SetText(getFPS(start, frames))
+		// Update the text of the FPS text entry.
+		fps.SetText(getFPS(start, frames))
 
-			// Draw the entire FPS text entry onto the screen starting at the
-			// destination point (8, 4).
-			dp = image.Pt(8, 4)
-			err = win.Draw(dp, fps)
-			if err != nil {
-				return err
-			}
+		// Draw the entire FPS text entry onto the screen starting at the
+		// destination point (8, 4).
+		dp = image.Pt(8, 4)
+		err = win.Draw(dp, fps)
+		if err != nil {
+			return err
+		}
 
-			// Display window rendering updates on the screen.
-			win.Update()
-			frames++
+		// Display window rendering updates on the screen.
+		win.Update()
+		frames++
 
-			// Poll events until the event queue is empty.
-			for e := win.PollEvent(); e != nil; e = win.PollEvent() {
-				fmt.Printf("%T: %v\n", e, e)
-				switch e.(type) {
-				case we.Close:
-					// Close the window.
-					return nil
-				}
+		// Poll events until the event queue is empty.
+		for e := win.PollEvent(); e != nil; e = win.PollEvent() {
+			fmt.Printf("%T: %v\n", e, e)
+			switch e.(type) {
+			case we.Close:
+				// Close the window.
+				return nil
 			}
 		}
 	}

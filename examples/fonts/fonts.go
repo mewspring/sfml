@@ -148,9 +148,7 @@ func fonts() (err error) {
 // getFPS returns the average FPS as a string, based on the provided start time
 // and frame count.
 func getFPS(start time.Time, frames float64) (text string) {
-	// Total runtime in seconds.
-	seconds := float64(time.Since(start)) / float64(time.Second)
 	// Average FPS.
-	fps := frames / seconds
+	fps := frames / time.Since(start).Seconds()
 	return fmt.Sprintf("FPS: %.2f", fps)
 }

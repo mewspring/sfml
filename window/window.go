@@ -100,6 +100,19 @@ func (win *Window) Height() int {
 	return int(size.y)
 }
 
+func Cbool(b bool) int {
+	if b {
+		return 1
+	} else {
+		return 0
+	}
+}
+
+// Show or hide the mouse cursor. It's visible by default.
+func (win *Window) SetMouseCursorVisible(visible bool) {
+	C.sfWindow_setMouseCursorVisible(win.Win, C.sfBool(Cbool(visible)))
+}
+
 // Clear clears the window and fills it with the provided color.
 func (win *Window) Clear(c color.Color) {
 	C.sfRenderWindow_clear(win.Win, sfmlColor(c))

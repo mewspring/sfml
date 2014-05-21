@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"unsafe"
 
 	"github.com/mewmew/sfml/font"
 	"github.com/mewmew/sfml/texture"
@@ -90,13 +91,13 @@ func (win *Window) SetTitle(title string) {
 
 // Width returns the width of the window.
 func (win *Window) Width() int {
-	size := C.sfWindow_getSize(win.Win)
+	size := C.sfRenderWindow_getSize(win.Win)
 	return int(size.x)
 }
 
 // Height returns the height of the window.
 func (win *Window) Height() int {
-	size := C.sfWindow_getSize(win.Win)
+	size := C.sfRenderWindow_getSize(win.Win)
 	return int(size.y)
 }
 
@@ -118,12 +119,12 @@ func (win *Window) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle)
 	switch srcImg := src.(type) {
 	case *font.Text:
 		// TODO(u): Handle sr?
-		C.sfText_setPosition(srcImg.Text, sfmlFloatPt(dp))
-		C.sfRenderWindow_drawText(win.Win, srcImg.Text, nil)
+		C.sfText_setPosition((*C.sfText)(unsafe.Pointer(srcImg.Text)), sfmlFloatPt(dp))
+		C.sfRenderWindow_drawText(win.Win, (*C.sfText)(unsafe.Pointer(srcImg.Text)), nil)
 	case *texture.Texture:
-		C.sfSprite_setTextureRect(srcImg.Sprite, sfmlIntRect(sr))
-		C.sfSprite_setPosition(srcImg.Sprite, sfmlFloatPt(dp))
-		C.sfRenderWindow_drawSprite(win.Win, srcImg.Sprite, nil)
+		C.sfSprite_setTextureRect((*C.sfSprite)(unsafe.Pointer(srcImg.Sprite)), sfmlIntRect(sr))
+		C.sfSprite_setPosition((*C.sfSprite)(unsafe.Pointer(srcImg.Sprite)), sfmlFloatPt(dp))
+		C.sfRenderWindow_drawSprite(win.Win, (*C.sfSprite)(unsafe.Pointer(srcImg.Sprite)), nil)
 	default:
 		return fmt.Errorf("Window.DrawRect: support for image format %T not yet implemented", src)
 	}

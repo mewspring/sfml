@@ -221,8 +221,8 @@ func (dst *Texture) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle
 	switch srcImg := src.(type) {
 	case *font.Text:
 		// TODO(u): Handle sr?
-		C.sfText_setPosition(srcImg.Text, sfmlFloatPt(dp))
-		C.sfRenderTexture_drawText(dst.RenderTex, srcImg.Text, nil)
+		C.sfText_setPosition((*C.sfText)(unsafe.Pointer(srcImg.Text)), sfmlFloatPt(dp))
+		C.sfRenderTexture_drawText(dst.RenderTex, (*C.sfText)(unsafe.Pointer(srcImg.Text)), nil)
 		C.sfRenderTexture_display(dst.RenderTex)
 	case *Texture:
 		C.sfSprite_setTextureRect(srcImg.Sprite, sfmlIntRect(sr))

@@ -23,13 +23,13 @@ func sfmlColor(c color.Color) C.sfColor {
 
 // sfmlIntRect returns a SFML IntRect based on the provided Go image.Rectangle.
 func sfmlIntRect(r image.Rectangle) C.sfIntRect {
-	rect := C.sfIntRect{
+	sfRect := C.sfIntRect{
 		left:   C.int(r.Min.X),
 		top:    C.int(r.Min.Y),
 		width:  C.int(r.Dx()),
 		height: C.int(r.Dy()),
 	}
-	return rect
+	return sfRect
 }
 
 // sfmlFloatPt returns a SFML Vector2f based on the provided Go image.Point.
@@ -47,7 +47,7 @@ func utf32(s string) *C.sfUint32 {
 	for _, r := range s {
 		s32 = append(s32, C.sfUint32(r))
 	}
-	// End with NULL byte.
+	// End with a NULL byte.
 	s32 = append(s32, 0)
 	return &s32[0]
 }

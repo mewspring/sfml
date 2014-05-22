@@ -99,6 +99,12 @@ func (win Window) SetTitle(title string) {
 	C.sfRenderWindow_setUnicodeTitle(win.win, utf32(title))
 }
 
+// ShowCursor displays or hides the mouse cursor depending on the value of
+// visible. It is visible by default.
+func (win Window) ShowCursor(visible bool) {
+	C.sfRenderWindow_setMouseCursorVisible(win.win, sfmlBool(visible))
+}
+
 // Width returns the width of the window.
 func (win Window) Width() int {
 	size := C.sfRenderWindow_getSize(win.win)

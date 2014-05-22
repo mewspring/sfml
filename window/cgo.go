@@ -40,6 +40,14 @@ func sfmlFloatPt(pt image.Point) C.sfVector2f {
 	return sfPt
 }
 
+// sfmlBool returns a SFML boolean based on the provided Go bool.
+func sfmlBool(b bool) C.sfBool {
+	if b {
+		return C.sfTrue
+	}
+	return C.sfFalse
+}
+
 // utf32 returns the UTF-32 representation of s.
 func utf32(s string) *C.sfUint32 {
 	s32 := make([]C.sfUint32, 0, len(s))

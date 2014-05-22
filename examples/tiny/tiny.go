@@ -69,8 +69,8 @@ func tiny() (err error) {
 			}
 		}
 
-		// Clear the window and fill it with white color.
-		win.Clear(color.White)
+		// Fill the window with white color.
+		win.Fill(color.White)
 
 		// Draw the entire background texture onto the window.
 		err = win.Draw(image.ZP, bg)
@@ -88,8 +88,8 @@ func tiny() (err error) {
 			return err
 		}
 
-		// Display window rendering updates on the screen.
-		win.Update()
+		// Display what has been rendered so far to the window.
+		win.Display()
 	}
 
 	return nil

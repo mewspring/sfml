@@ -101,8 +101,8 @@ func fonts() (err error) {
 		// Cap the FPS.
 		<-ticker.C
 
-		// Clear the window and fill it with white color.
-		win.Clear(color.White)
+		// Fill the window with white color.
+		win.Fill(color.White)
 
 		// Draw the entire background texture onto the window.
 		err = win.Draw(image.ZP, bg)
@@ -129,8 +129,8 @@ func fonts() (err error) {
 			return err
 		}
 
-		// Display window rendering updates on the screen.
-		win.Update()
+		// Display what has been rendered so far to the window.
+		win.Display()
 		frames++
 
 		// Poll events until the event queue is empty.

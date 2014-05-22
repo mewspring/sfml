@@ -22,7 +22,7 @@ type Image struct {
 //
 // Note: The Free method of the texture must be called when finished using it.
 func Load(path string) (tex Image, err error) {
-	// Load texture from file.
+	// Load the texture from file.
 	tex.tex = C.sfTexture_createFromFile(C.CString(path), nil)
 	if tex.tex == nil {
 		return Image{}, fmt.Errorf("texture.Load: unable to load %q", path)
@@ -45,7 +45,7 @@ func Read(img image.Image) (tex Image, err error) {
 
 // Free frees the texture.
 func (tex Image) Free() {
-	// TODO(u): Free sprite as well?
+	C.sfSprite_destroy(tex.sprite)
 	C.sfTexture_destroy(tex.tex)
 }
 

@@ -80,7 +80,7 @@ fonts.
 
 ![Screenshot - fonts](https://raw.github.com/mewmew/sfml/master/examples/fonts/fonts.png)
 
-[examples/fonts]: https://github.com/mewmew/sfml/blob/master/examples/fonts/fonts.go#L38
+[examples/fonts]: https://github.com/mewmew/sfml/blob/master/examples/fonts/fonts.go#L39
 
 public domain
 -------------

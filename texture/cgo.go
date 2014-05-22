@@ -22,13 +22,13 @@ func sfmlColor(c color.Color) C.sfColor {
 
 // sfmlIntRect returns a SFML IntRect based on the provided Go image.Rectangle.
 func sfmlIntRect(r image.Rectangle) C.sfIntRect {
-	rect := C.sfIntRect{
+	sfRect := C.sfIntRect{
 		left:   C.int(r.Min.X),
 		top:    C.int(r.Min.Y),
 		width:  C.int(r.Dx()),
 		height: C.int(r.Dy()),
 	}
-	return rect
+	return sfRect
 }
 
 // sfmlFloatPt returns a SFML Vector2f based on the provided Go image.Point.

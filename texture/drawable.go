@@ -10,6 +10,7 @@ import (
 	"image"
 	"image/color"
 
+	"github.com/mewmew/sfml/font"
 	"github.com/mewmew/wandi"
 )
 
@@ -43,7 +44,7 @@ func NewDrawable(width, height int) (tex Drawable, err error) {
 }
 
 // texture returns the texture associated with the rendering texture.
-func (tex *Drawable) texture() *C.sfTexture {
+func (tex Drawable) texture() *C.sfTexture {
 	return C.sfRenderTexture_getTexture(tex.tex)
 }
 
@@ -129,17 +130,22 @@ func (dst Drawable) Draw(dp image.Point, src wandi.Image) (err error) {
 // sr, onto the dst texture starting at the destination point dp.
 func (dst Drawable) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
 	switch srcImg := src.(type) {
-	case *Drawable:
+	case Drawable:
 		C.sfSprite_setTextureRect(srcImg.sprite, sfmlIntRect(sr))
 		C.sfSprite_setPosition(srcImg.sprite, sfmlFloatPt(dp))
 		C.sfRenderTexture_drawSprite(dst.tex, srcImg.sprite, nil)
 		C.sfRenderTexture_display(dst.tex)
-	case *Image:
+	case Image:
 		C.sfSprite_setTextureRect(srcImg.sprite, sfmlIntRect(sr))
 		C.sfSprite_setPosition(srcImg.sprite, sfmlFloatPt(dp))
 		C.sfRenderTexture_drawSprite(dst.tex, srcImg.sprite, nil)
 		C.sfRenderTexture_display(dst.tex)
-	// TODO(u): handle *font.Text
+	case font.Text:
+		// TODO(u): Handle sr?
+		text := textText(srcImg)
+		C.sfText_setPosition(text, sfmlFloatPt(dp))
+		C.sfRenderTexture_drawText(dst.tex, text, nil)
+		C.sfRenderTexture_display(dst.tex)
 	default:
 		return fmt.Errorf("Texture.DrawRect: support for image format %T not yet implemented", src)
 	}

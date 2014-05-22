@@ -33,16 +33,17 @@ Examples
 ### tiny
 
 The [tiny][examples/tiny] command demonstrates how to render images onto the
-window using the [Draw][sfml/window#Draw] and [DrawRect][sfml/window#DrawRect]
-methods. It also gives an example of a basic event loop.
+window using the [Draw][sfml/window#Window.Draw] and
+[DrawRect][sfml/window#Window.DrawRect] methods. It also gives an example of a
+basic event loop.
 
 	go get github.com/mewmew/sfml/examples/tiny
 
 ![Screenshot - tiny](https://raw.github.com/mewmew/sfml/master/examples/tiny/tiny.png)
 
 [examples/tiny]: https://github.com/mewmew/sfml/blob/master/examples/tiny/tiny.go#L38
-[sfml/window#Draw]: http://godoc.org/github.com/mewmew/sfml/window#Draw
-[sfml/window#DrawRect]: http://godoc.org/github.com/mewmew/sfml/window#DrawRect
+[sfml/window#Window.Draw]: http://godoc.org/github.com/mewmew/sfml/window#Window.Draw
+[sfml/window#Window.DrawRect]: http://godoc.org/github.com/mewmew/sfml/window#Window.DrawRect
 
 ### fonts
 

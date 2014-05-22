@@ -15,6 +15,7 @@ import (
 	"image"
 	"image/color"
 
+	"github.com/mewmew/sfml/font"
 	"github.com/mewmew/sfml/texture"
 	"github.com/mewmew/wandi"
 )
@@ -131,7 +132,11 @@ func (win Window) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) 
 		C.sfSprite_setTextureRect(sprite, sfmlIntRect(sr))
 		C.sfSprite_setPosition(sprite, sfmlFloatPt(dp))
 		C.sfRenderWindow_drawSprite(win.win, sprite, nil)
-	// TODO(u): handle *font.Text
+	case font.Text:
+		// TODO(u): Handle sr?
+		text := textText(srcImg)
+		C.sfText_setPosition(text, sfmlFloatPt(dp))
+		C.sfRenderWindow_drawText(win.win, text, nil)
 	default:
 		return fmt.Errorf("Window.DrawRect: support for image format %T not yet implemented", src)
 	}

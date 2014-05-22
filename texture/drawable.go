@@ -5,6 +5,8 @@ package texture
 import "C"
 
 import (
+	"errors"
+	"fmt"
 	"image"
 	"image/color"
 
@@ -22,7 +24,20 @@ type Drawable struct {
 
 // NewDrawable creates a drawable texture of the specified dimensions.
 func NewDrawable(width, height int) (tex Drawable, err error) {
-	panic("not yet implemented")
+	// Create a rendering texture of the specified dimensions.
+	tex.tex = C.sfRenderTexture_create(C.uint(width), C.uint(height), C.sfFalse)
+	if tex.tex == nil {
+		return Drawable{}, fmt.Errorf("texture.NewDrawable: unable to create %dx%d rendering texture", width, height)
+	}
+
+	// Create a sprite for the rendering texture.
+	tex.sprite = C.sfSprite_create()
+	if tex.sprite == nil {
+		return Drawable{}, errors.New("texture.NewDrawable: unable to create sprite for the rendering texture")
+	}
+	C.sfSprite_setTexture(tex.sprite, tex.texture(), C.sfTrue)
+
+	return tex, nil
 }
 
 // texture returns the texture associated with the rendering texture.

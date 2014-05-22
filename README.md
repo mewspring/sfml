@@ -39,6 +39,15 @@ hardware accelerated off-screen rendering.
 
 [examples/off-screen]: https://github.com/mewmew/sfml/blob/master/examples/off-screen/off-screen.go#L34
 
+### soft
+
+The [soft][examples/soft] command demonstrates how to combine software and
+hardware rendering.
+
+	go get github.com/mewmew/sfml/examples/soft
+
+[examples/soft]: https://github.com/mewmew/sfml/blob/master/examples/soft/soft.go#L34
+
 ### tiny
 
 The [tiny][examples/tiny] command demonstrates how to render images onto the

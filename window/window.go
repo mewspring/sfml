@@ -122,7 +122,10 @@ func (win Window) Draw(dp image.Point, src wandi.Image) (err error) {
 func (win Window) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
 	switch srcImg := src.(type) {
 	case texture.Drawable:
-		_ = srcImg
+		sprite := drawableSprite(srcImg)
+		C.sfSprite_setTextureRect(sprite, sfmlIntRect(sr))
+		C.sfSprite_setPosition(sprite, sfmlFloatPt(dp))
+		C.sfRenderWindow_drawSprite(win.win, sprite, nil)
 	case texture.Image:
 		sprite := imageSprite(srcImg)
 		C.sfSprite_setTextureRect(sprite, sfmlIntRect(sr))

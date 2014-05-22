@@ -51,7 +51,7 @@ func (tex *Drawable) texture() *C.sfTexture {
 //
 // Note: The Free method of the texture must be called when finished using it.
 func LoadDrawable(path string) (tex Drawable, err error) {
-	// Load the read-only source texture from file.
+	// Load the provided file and convert it into a read-only texture.
 	src, err := Load(path)
 	if err != nil {
 		return Drawable{}, err
@@ -78,7 +78,26 @@ func LoadDrawable(path string) (tex Drawable, err error) {
 //
 // Note: The Free method of the texture must be called when finished using it.
 func ReadDrawable(img image.Image) (tex Drawable, err error) {
-	panic("not yet implemented")
+	// Read the provided image and convert it into a read-only texture.
+	src, err := Read(img)
+	if err != nil {
+		return Drawable{}, err
+	}
+	defer src.Free()
+
+	// Create a drawable texture of the same image dimensions.
+	tex, err = NewDrawable(src.Width(), src.Height())
+	if err != nil {
+		return Drawable{}, err
+	}
+
+	// Draw the read-only source texture onto the drawable texture.
+	err = tex.Draw(image.ZP, src)
+	if err != nil {
+		return Drawable{}, err
+	}
+
+	return tex, nil
 }
 
 // Free frees the texture.
@@ -120,6 +139,7 @@ func (dst Drawable) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle
 		C.sfSprite_setPosition(srcImg.sprite, sfmlFloatPt(dp))
 		C.sfRenderTexture_drawSprite(dst.tex, srcImg.sprite, nil)
 		C.sfRenderTexture_display(dst.tex)
+	// TODO(u): handle *font.Text
 	default:
 		return fmt.Errorf("Texture.DrawRect: support for image format %T not yet implemented", src)
 	}

@@ -131,6 +131,7 @@ func (win Window) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) 
 		C.sfSprite_setTextureRect(sprite, sfmlIntRect(sr))
 		C.sfSprite_setPosition(sprite, sfmlFloatPt(dp))
 		C.sfRenderWindow_drawSprite(win.win, sprite, nil)
+	// TODO(u): handle *font.Text
 	default:
 		return fmt.Errorf("Window.DrawRect: support for image format %T not yet implemented", src)
 	}

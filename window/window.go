@@ -1,7 +1,5 @@
-// Package window handles window creation, drawing and events.
-//
-// This package uses a small subset of the features provided by the SFML library
-// version 2.1 [1].
+// Package window handles window creation, drawing and events. It uses a small
+// subset of the features provided by the SFML library version 2.1 [1].
 //
 // [1]: http://www.sfml-dev.org/
 package window

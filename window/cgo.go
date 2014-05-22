@@ -4,6 +4,7 @@ package window
 import "C"
 
 import (
+	"image"
 	"image/color"
 )
 
@@ -17,6 +18,26 @@ func sfmlColor(c color.Color) C.sfColor {
 		a: C.sfUint8(a),
 	}
 	return sfColor
+}
+
+// sfmlIntRect returns a SFML IntRect based on the provided Go image.Rectangle.
+func sfmlIntRect(r image.Rectangle) C.sfIntRect {
+	sfRect := C.sfIntRect{
+		left:   C.int(r.Min.X),
+		top:    C.int(r.Min.Y),
+		width:  C.int(r.Dx()),
+		height: C.int(r.Dy()),
+	}
+	return sfRect
+}
+
+// sfmlFloatPt returns a SFML Vector2f based on the provided Go image.Point.
+func sfmlFloatPt(pt image.Point) C.sfVector2f {
+	sfPt := C.sfVector2f{
+		x: C.float(pt.X),
+		y: C.float(pt.Y),
+	}
+	return sfPt
 }
 
 // utf32 returns the UTF-32 representation of s.

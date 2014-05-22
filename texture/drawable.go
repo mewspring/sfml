@@ -33,7 +33,7 @@ func NewDrawable(width, height int) (tex Drawable, err error) {
 	// Create a sprite for the rendering texture.
 	tex.sprite = C.sfSprite_create()
 	if tex.sprite == nil {
-		return Drawable{}, errors.New("texture.NewDrawable: unable to create sprite for the rendering texture")
+		return Drawable{}, errors.New("texture.NewDrawable: unable to create sprite")
 	}
 	C.sfSprite_setTexture(tex.sprite, tex.texture(), C.sfTrue)
 

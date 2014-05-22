@@ -5,6 +5,7 @@ package texture
 import "C"
 
 import (
+	"errors"
 	"fmt"
 	"image"
 )
@@ -13,16 +14,27 @@ import (
 type Image struct {
 	// A read-only GPU texture.
 	tex *C.sfTexture
+	// A sprite representation of the GPU texture.
+	sprite *C.sfSprite
 }
 
 // Load loads the provided file and converts it into a read-only texture.
 //
 // Note: The Free method of the texture must be called when finished using it.
 func Load(path string) (tex Image, err error) {
+	// Load texture from file.
 	tex.tex = C.sfTexture_createFromFile(C.CString(path), nil)
 	if tex.tex == nil {
 		return Image{}, fmt.Errorf("texture.Load: unable to load %q", path)
 	}
+
+	// Create a sprite for the texture.
+	tex.sprite = C.sfSprite_create()
+	if tex.sprite == nil {
+		return Image{}, errors.New("texture.Load: unable to create sprite")
+	}
+	C.sfSprite_setTexture(tex.sprite, tex.tex, C.sfTrue)
+
 	return tex, nil
 }
 

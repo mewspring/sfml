@@ -124,7 +124,10 @@ func (win Window) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) 
 	case texture.Drawable:
 		_ = srcImg
 	case texture.Image:
-		_ = srcImg
+		sprite := imageSprite(srcImg)
+		C.sfSprite_setTextureRect(sprite, sfmlIntRect(sr))
+		C.sfSprite_setPosition(sprite, sfmlFloatPt(dp))
+		C.sfRenderWindow_drawSprite(win.win, sprite, nil)
 	default:
 		return fmt.Errorf("Window.DrawRect: support for image format %T not yet implemented", src)
 	}

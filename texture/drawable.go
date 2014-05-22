@@ -1,6 +1,7 @@
 package texture
 
 // #cgo LDFLAGS: -lcsfml-graphics
+// #include <string.h>
 // #include <SFML/Graphics.h>
 import "C"
 
@@ -9,6 +10,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"unsafe"
 
 	"github.com/mewmew/sfml/font"
 	"github.com/mewmew/wandi"
@@ -147,7 +149,7 @@ func (dst Drawable) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle
 		C.sfRenderTexture_drawText(dst.tex, text, nil)
 		C.sfRenderTexture_display(dst.tex)
 	default:
-		return fmt.Errorf("Texture.DrawRect: support for image format %T not yet implemented", src)
+		return fmt.Errorf("Drawable.DrawRect: support for image format %T not yet implemented", src)
 	}
 	return nil
 }
@@ -159,5 +161,21 @@ func (tex Drawable) Fill(c color.Color) {
 
 // Image returns an image.Image representation of the texture.
 func (tex Drawable) Image() (img image.Image, err error) {
-	panic("not yet implemented")
+	// Copy the rendering texture to a SFML image.
+	sfImg := C.sfTexture_copyToImage(tex.texture())
+	if sfImg == nil {
+		return nil, errors.New("Drawable.Image: unable to create image from texture")
+	}
+	defer C.sfImage_destroy(sfImg)
+
+	// Create a Go RGBA image based on the pixels of the SFML image.
+	pix := C.sfImage_getPixelsPtr(sfImg)
+	if pix == nil {
+		return nil, errors.New("Drawable.Image: unable to locate image pixels")
+	}
+	size := C.sfImage_getSize(sfImg)
+	dst := image.NewRGBA(image.Rect(0, 0, int(size.x), int(size.y)))
+	C.memcpy(unsafe.Pointer(&dst.Pix[0]), unsafe.Pointer(pix), C.size_t(len(dst.Pix)))
+
+	return dst, nil
 }

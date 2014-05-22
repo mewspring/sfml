@@ -1,5 +1,6 @@
 package font
 
+// #cgo LDFLAGS: -lcsfml-graphics
 // #include <SFML/Graphics.h>
 import "C"
 
@@ -8,11 +9,11 @@ import (
 	"image/color"
 )
 
-// A Text is a graphical text entry with a specific font size, style and color.
-// It implements the wandi.Image interface.
+// Text represent a graphical text entry with a specific font size, style and
+// color. It implements the wandi.Image interface.
 type Text struct {
 	// A graphical text entry.
-	Text *C.sfText
+	text *C.sfText
 }
 
 // NewText returns a new graphical text entry based on the provided font and any
@@ -23,16 +24,15 @@ type Text struct {
 // The default font size, style and color of the text is 12, regular (no style)
 // and black respectively.
 //
-// Note: The Free method of the graphical text entry must be called when
-// finished using it.
-func NewText(f *Font, args ...interface{}) (text *Text, err error) {
-	// Create a SFML text and associate the font with it.
-	text = new(Text)
-	text.Text = C.sfText_create()
-	if text.Text == nil {
-		return nil, errors.New("font.NewText: unable to create text")
+// Note: The Free method of the text entry must be called when finished using
+// it.
+func NewText(f Font, args ...interface{}) (text Text, err error) {
+	// Create a text entry and associate the font with it.
+	text.text = C.sfText_create()
+	if text.text == nil {
+		return Text{}, errors.New("font.NewText: unable to create text")
 	}
-	C.sfText_setFont(text.Text, f.font)
+	C.sfText_setFont(text.text, f.font)
 
 	// Set the default font size, style and color of the text.
 	text.SetSize(12)
@@ -56,19 +56,19 @@ func NewText(f *Font, args ...interface{}) (text *Text, err error) {
 	return text, nil
 }
 
-// Free frees the graphical text entry.
-func (text *Text) Free() {
-	C.sfText_destroy(text.Text)
+// Free frees the text entry.
+func (text Text) Free() {
+	C.sfText_destroy(text.text)
 }
 
-// SetText sets the text of the graphical text entry.
-func (text *Text) SetText(s string) {
-	C.sfText_setUnicodeString(text.Text, utf32(s))
+// SetText sets the text of the text entry.
+func (text Text) SetText(s string) {
+	C.sfText_setUnicodeString(text.text, utf32(s))
 }
 
-// SetSize sets the font size of the text, in pixels.
-func (text *Text) SetSize(size int) {
-	C.sfText_setCharacterSize(text.Text, C.uint(size))
+// SetSize sets the font size, in pixels, of the text.
+func (text Text) SetSize(size int) {
+	C.sfText_setCharacterSize(text.text, C.uint(size))
 }
 
 // Style is a bitfield which represents the style of a text.
@@ -87,23 +87,23 @@ const (
 )
 
 // SetStyle sets the style of the text.
-func (text *Text) SetStyle(style Style) {
-	C.sfText_setStyle(text.Text, C.sfUint32(style))
+func (text Text) SetStyle(style Style) {
+	C.sfText_setStyle(text.text, C.sfUint32(style))
 }
 
 // SetColor sets the color of the text.
-func (text *Text) SetColor(c color.Color) {
-	C.sfText_setColor(text.Text, sfmlColor(c))
+func (text Text) SetColor(c color.Color) {
+	C.sfText_setColor(text.text, sfmlColor(c))
 }
 
-// Width returns the width of the graphical text entry.
-func (text *Text) Width() int {
-	bounds := C.sfText_getLocalBounds(text.Text)
+// Width returns the width of the text entry.
+func (text Text) Width() int {
+	bounds := C.sfText_getLocalBounds(text.text)
 	return int(bounds.width + bounds.left)
 }
 
-// Height returns the height of the graphical text entry.
-func (text *Text) Height() int {
-	bounds := C.sfText_getLocalBounds(text.Text)
+// Height returns the height of the text entry.
+func (text Text) Height() int {
+	bounds := C.sfText_getLocalBounds(text.text)
 	return int(bounds.height + bounds.top)
 }

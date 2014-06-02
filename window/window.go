@@ -153,6 +153,11 @@ func (win Window) Fill(c color.Color) {
 	C.sfRenderWindow_clear(win.win, sfmlColor(c))
 }
 
+// SetActive activates the CPU context of the window.
+func (win Window) SetActive() {
+	C.sfRenderWindow_setActive(win.win, C.sfTrue)
+}
+
 // Display displays what has been rendered so far to the window.
 func (win Window) Display() {
 	C.sfRenderWindow_display(win.win)

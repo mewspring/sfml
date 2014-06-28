@@ -143,8 +143,6 @@ func fonts() (err error) {
 			}
 		}
 	}
-
-	return nil
 }
 
 // getFPS returns the average FPS as a string, based on the provided start time

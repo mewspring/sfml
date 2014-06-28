@@ -70,7 +70,8 @@ func (win Window) PollEvent() (event we.Event) {
 // prev represents the previously recorded cursor position.
 var prev image.Point
 
-// weEvent returns the we.Event corresponding to the provided SFML event.
+// weEvent returns the corresponding we.Event for the provided SFML event or nil
+// if no such event exists.
 func weEvent(sfEvent C.sfEvent) (event we.Event) {
 	typ := C.getEventType(sfEvent)
 	switch typ {
@@ -152,8 +153,4 @@ func weEvent(sfEvent C.sfEvent) (event we.Event) {
 		log.Printf("window.weEvent: support for SFML event type %d not yet implemented.\n", typ)
 		return nil
 	}
-
-	// Ignore event.
-	log.Printf("window.weEvent: ignoring SFML event of type %d.\n", typ)
-	return nil
 }

@@ -110,6 +110,4 @@ func tiny(title string) (err error) {
 		// Display what has been rendered so far to the window.
 		win.Display()
 	}
-
-	return nil
 }

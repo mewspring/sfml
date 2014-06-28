@@ -41,7 +41,7 @@ basic event loop.
 
 ![Screenshot - tiny](https://raw.github.com/mewmew/sfml/master/examples/tiny/tiny.png)
 
-[examples/tiny]: https://github.com/mewmew/sfml/blob/master/examples/tiny/tiny.go#L38
+[examples/tiny]: https://github.com/mewmew/sfml/blob/master/examples/tiny/tiny.go#L37
 [sfml/window#Window.Draw]: http://godoc.org/github.com/mewmew/sfml/window#Window.Draw
 [sfml/window#Window.DrawRect]: http://godoc.org/github.com/mewmew/sfml/window#Window.DrawRect
 

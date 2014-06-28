@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"path"
 
 	"github.com/mewkiz/pkg/goutil"
 	"github.com/mewmew/sfml/texture"
@@ -63,14 +64,14 @@ func tiny(title string) (err error) {
 	win.SetTitle(title)
 
 	// Load background texture.
-	bg, err := texture.Load(dataDir + "/bg.png")
+	bg, err := texture.Load(path.Join(dataDir, "bg.png"))
 	if err != nil {
 		return err
 	}
 	defer bg.Free()
 
 	// Load foreground texture.
-	fg, err := texture.Load(dataDir + "/fg.png")
+	fg, err := texture.Load(path.Join(dataDir, "fg.png"))
 	if err != nil {
 		return err
 	}

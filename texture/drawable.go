@@ -156,7 +156,7 @@ func (dst Drawable) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle
 
 // Fill fills the entire texture with the provided color.
 func (dst Drawable) Fill(c color.Color) {
-	C.sfRenderTexture_clear(tex.tex, sfmlColor(c))
+	C.sfRenderTexture_clear(dst.tex, sfmlColor(c))
 }
 
 // Image returns an image.Image representation of the texture.

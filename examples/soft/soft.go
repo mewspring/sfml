@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"path"
 
 	"github.com/mewkiz/pkg/goutil"
 	"github.com/mewkiz/pkg/imgutil"
@@ -47,7 +48,7 @@ func soft() (err error) {
 	}
 
 	// Load background texture.
-	bg, err := texture.LoadDrawable(dataDir + "/bg.png")
+	bg, err := texture.LoadDrawable(path.Join(dataDir, "bg.png"))
 	if err != nil {
 		return err
 	}

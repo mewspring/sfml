@@ -5,6 +5,7 @@ package main
 import (
 	"image"
 	"log"
+	"path"
 
 	"github.com/mewkiz/pkg/goutil"
 	"github.com/mewkiz/pkg/imgutil"
@@ -33,14 +34,14 @@ func main() {
 // render demonstrates how to perform hardware accelerated off-screen rendering.
 func render() (err error) {
 	// Load background texture.
-	bg, err := texture.LoadDrawable(dataDir + "/bg.png")
+	bg, err := texture.LoadDrawable(path.Join(dataDir, "bg.png"))
 	if err != nil {
 		return err
 	}
 	defer bg.Free()
 
 	// Load foreground texture.
-	fg, err := texture.Load(dataDir + "/fg.png")
+	fg, err := texture.Load(path.Join(dataDir, "fg.png"))
 	if err != nil {
 		return err
 	}

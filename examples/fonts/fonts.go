@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"path"
 	"runtime"
 	"time"
 
@@ -51,14 +52,14 @@ func fonts() (err error) {
 	defer win.Close()
 
 	// Load background texture.
-	bg, err := texture.Load(dataDir + "/bg2.png")
+	bg, err := texture.Load(path.Join(dataDir, "bg2.png"))
 	if err != nil {
 		return err
 	}
 	defer bg.Free()
 
 	// Load the text TTF font.
-	textFont, err := font.Load(dataDir + "/Exocet.ttf")
+	textFont, err := font.Load(path.Join(dataDir, "Exocet.ttf"))
 	if err != nil {
 		return err
 	}
@@ -74,7 +75,7 @@ func fonts() (err error) {
 	defer text.Free()
 
 	// Load the fps TTF font.
-	fpsFont, err := font.Load(dataDir + "/DejaVuSansMono.ttf")
+	fpsFont, err := font.Load(path.Join(dataDir, "DejaVuSansMono.ttf"))
 	if err != nil {
 		return err
 	}

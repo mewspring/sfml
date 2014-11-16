@@ -2,6 +2,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"log"
@@ -69,10 +70,12 @@ func soft() (err error) {
 	if err != nil {
 		return err
 	}
-	err = imgutil.WriteFile("result.png", result)
+	outPath := "result.png"
+	err = imgutil.WriteFile(outPath, result)
 	if err != nil {
 		return err
 	}
+	fmt.Println("Created:", outPath)
 
 	return nil
 }

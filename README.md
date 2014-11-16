@@ -7,6 +7,10 @@ subject to change. The documentation can be inaccurate.
 sfml
 ====
 
+[![Build Status](https://travis-ci.org/mewmew/sfml.svg?branch=master)](https://travis-ci.org/mewmew/sfml)
+[![Coverage Status](https://img.shields.io/coveralls/mewmew/sfml.svg)](https://coveralls.io/r/mewmew/sfml?branch=master)
+[![GoDoc](https://godoc.org/github.com/mewmew/sfml?status.svg)](https://godoc.org/github.com/mewmew/sfml)
+
 This project implements window creation, event handling and image drawing using
 [SFML][] version 2.1.
 

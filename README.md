@@ -12,7 +12,7 @@ sfml
 [![GoDoc](https://godoc.org/github.com/mewmew/sfml?status.svg)](https://godoc.org/github.com/mewmew/sfml)
 
 This project implements window creation, event handling and image drawing using
-[SFML][] version 2.1.
+[SFML] version 2.1.
 
 [SFML]: http://www.sfml-dev.org/
 
@@ -90,6 +90,6 @@ hardware rendering.
 public domain
 -------------
 
-This code is hereby released into the *[public domain][]*.
+The source code and any original content of this repository is hereby released into the [public domain].
 
 [public domain]: https://creativecommons.org/publicdomain/zero/1.0/

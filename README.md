@@ -31,7 +31,7 @@ The [tiny][examples/tiny] command demonstrates how to render images onto the win
 
     go get github.com/mewmew/sfml/examples/tiny
 
-![Screenshot - tiny](https://raw.github.com/mewmew/sfml/master/examples/tiny/tiny.png)
+![Screenshot - tiny](https://raw.githubusercontent.com/mewmew/sfml/master/examples/tiny/tiny.png)
 
 [examples/tiny]: https://github.com/mewmew/sfml/blob/master/examples/tiny/tiny.go#L37
 [sfml/window#Window.Draw]: http://godoc.org/github.com/mewmew/sfml/window#Window.Draw
@@ -43,7 +43,7 @@ The [fonts][examples/fonts] command demonstrates how to render text using TTF fo
 
     go get github.com/mewmew/sfml/examples/fonts
 
-![Screenshot - fonts](https://raw.github.com/mewmew/sfml/master/examples/fonts/fonts.png)
+![Screenshot - fonts](https://raw.githubusercontent.com/mewmew/sfml/master/examples/fonts/fonts.png)
 
 [examples/fonts]: https://github.com/mewmew/sfml/blob/master/examples/fonts/fonts.go#L39
 

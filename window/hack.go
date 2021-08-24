@@ -6,8 +6,8 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/mewmew/sfml/font"
-	"github.com/mewmew/sfml/texture"
+	"github.com/mewspring/sfml/font"
+	"github.com/mewspring/sfml/texture"
 )
 
 // drawableHack is a copy of texture.Drawable without modifications. Through the

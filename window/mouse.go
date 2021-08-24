@@ -6,7 +6,7 @@ import "C"
 import (
 	"log"
 
-	"github.com/mewmew/we"
+	"github.com/mewspring/we"
 )
 
 // weButton returns the we.Button corresponding to the provided SFML mouse

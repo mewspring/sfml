@@ -1,0 +1,14 @@
+github.com/d4l3k/messagediff v1.2.2-0.20190829033028-7e0a312ae40b/go.mod h1:Oozbb1TVXFac9FtSIxHBMnBCq2qeH/2KkEQxENCrlLo=
+github.com/goccy/go-json v0.7.6/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
+github.com/mewkiz/pkg v0.0.0-20210819145252-c152b3cef209 h1:mw/wvITfBcFJxyCTAhSD08M83xuprAg2yDaDtEiCJTg=
+github.com/mewkiz/pkg v0.0.0-20210819145252-c152b3cef209/go.mod h1:PnpYQLwivHI5z0+uhPEFJaHeSQWosr+23UaPgjN2xCM=
+github.com/mewspring/wandi v0.0.0-20210824222534-0b92d85c31af h1:iY4RDeMcoXQmgU00GZwmpBcDmBTcNlMFmu+cZ/xcpKo=
+github.com/mewspring/wandi v0.0.0-20210824222534-0b92d85c31af/go.mod h1:Sf2NcF9EI0X1QCK7O2tTzp0E+50IFWHMBDGjAMSJLCU=
+github.com/mewspring/we v0.0.0-20210824221507-a25205edc23b h1:UqMJhavG7srumlHx9McdkXQhQuGRw4/Gn/Hf8nw5V3o=
+github.com/mewspring/we v0.0.0-20210824221507-a25205edc23b/go.mod h1:oV2hexc+umTVhKk/q2a3ktSWCZCGg6WDAy8NS2JW14k=
+github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
+github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+golang.org/x/image v0.0.0-20190220214146-31aff87c08e9 h1:+vH8qNweCrORN49012OX3h0oWEXO3p+rRnpAGQinddk=
+golang.org/x/image v0.0.0-20190220214146-31aff87c08e9/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
+golang.org/x/net v0.0.0-20190213061140-3a22650c66bd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=

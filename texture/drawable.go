@@ -12,8 +12,8 @@ import (
 	"image/color"
 	"unsafe"
 
-	"github.com/mewmew/sfml/font"
-	"github.com/mewmew/wandi"
+	"github.com/mewspring/sfml/font"
+	"github.com/mewspring/wandi"
 )
 
 // Drawable represent a drawable texture. It implements the wandi.Drawable and

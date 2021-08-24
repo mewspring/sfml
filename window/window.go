@@ -1,5 +1,5 @@
 // Package window handles window creation, drawing and events. It uses a small
-// subset of the features provided by the SFML library version 2.1 [1].
+// subset of the features provided by the SFML library version 2.5 [1].
 //
 // [1]: http://www.sfml-dev.org/
 package window
@@ -13,9 +13,9 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/mewmew/sfml/font"
-	"github.com/mewmew/sfml/texture"
-	"github.com/mewmew/wandi"
+	"github.com/mewspring/sfml/font"
+	"github.com/mewspring/sfml/texture"
+	"github.com/mewspring/wandi"
 )
 
 // Style specifies the style and behavior of windows.

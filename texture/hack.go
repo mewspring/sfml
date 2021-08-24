@@ -6,7 +6,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/mewmew/sfml/font"
+	"github.com/mewspring/sfml/font"
 )
 
 // textHack is a copy of font.Text without modifications. Through the use of

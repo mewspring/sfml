@@ -1,6 +1,6 @@
 // Package font handles graphical text entries with customizable font size,
 // style and color. It uses a small subset of the features provided by the SFML
-// library version 2.1 [1].
+// library version 2.5 [1].
 //
 // [1]: http://www.sfml-dev.org/
 package font

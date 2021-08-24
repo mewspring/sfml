@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"github.com/mewkiz/pkg/goutil"
-	"github.com/mewmew/sfml/font"
-	"github.com/mewmew/sfml/texture"
-	"github.com/mewmew/sfml/window"
-	"github.com/mewmew/we"
+	"github.com/mewspring/sfml/font"
+	"github.com/mewspring/sfml/texture"
+	"github.com/mewspring/sfml/window"
+	"github.com/mewspring/we"
 )
 
 // dataDir is the absolute path to the example source directory.
@@ -23,7 +23,7 @@ var dataDir string
 func init() {
 	// Locate the absolute path to the example source directory.
 	var err error
-	dataDir, err = goutil.SrcDir("github.com/mewmew/sfml/examples/data")
+	dataDir, err = goutil.SrcDir("github.com/mewspring/sfml/examples/data")
 	if err != nil {
 		log.Fatalln(err)
 	}

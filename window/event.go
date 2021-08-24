@@ -26,16 +26,17 @@ package window
 //    return e.mouseButton;
 // }
 //
-// sfMouseWheelEvent getMouseWheelEvent(sfEvent e) {
-//    return e.mouseWheel;
+// sfMouseWheelScrollEvent getMouseWheelScrollEvent(sfEvent e) {
+//    return e.mouseWheelScroll;
 // }
 import "C"
 
 import (
+	"fmt"
 	"image"
 	"log"
 
-	"github.com/mewmew/we"
+	"github.com/mewspring/we"
 )
 
 // PollEvent returns a pending event from the event queue or nil if the queue
@@ -80,60 +81,64 @@ func weEvent(sfEvent C.sfEvent) (event we.Event) {
 		return we.Close{}
 	case C.sfEvtResized:
 		e := C.getSizeEvent(sfEvent)
-		event = we.Resize{
+		return we.Resize{
 			Width:  int(e.width),
 			Height: int(e.height),
 		}
-		return event
 
 	// Keyboard events.
 	case C.sfEvtTextEntered:
 		e := C.getTextEvent(sfEvent)
-		event = we.KeyRune(e.unicode)
-		return event
+		return we.KeyRune(e.unicode)
 	case C.sfEvtKeyPressed:
 		e := C.getKeyEvent(sfEvent)
-		event = we.KeyPress{
+		return we.KeyPress{
 			Key: weKey(e.code),
 			Mod: weMod(e),
 		}
-		return event
 	case C.sfEvtKeyReleased:
 		e := C.getKeyEvent(sfEvent)
-		event = we.KeyRelease{
+		return we.KeyRelease{
 			Key: weKey(e.code),
 			Mod: weMod(e),
 		}
-		return event
 
 	// Mouse events.
 	case C.sfEvtMouseWheelMoved:
-		e := C.getMouseWheelEvent(sfEvent)
+		e := C.getMouseWheelScrollEvent(sfEvent)
 		pt := image.Pt(int(e.x), int(e.y))
-		event = we.ScrollY{
-			Point: pt,
-			Off:   int(e.delta),
-			Mod:   getMod(),
+		switch e.wheel {
+		case C.sfMouseHorizontalWheel:
+			return we.ScrollX{
+				Point: pt,
+				Off:   int(e.delta),
+				Mod:   getMod(),
+			}
+		case C.sfMouseVerticalWheel:
+			return we.ScrollY{
+				Point: pt,
+				Off:   int(e.delta),
+				Mod:   getMod(),
+			}
+		default:
+			panic(fmt.Errorf("support for mouse wheel %v not yet implemented", e.wheel))
 		}
-		return event
 	case C.sfEvtMouseButtonPressed:
 		e := C.getMouseButtonEvent(sfEvent)
 		pt := image.Pt(int(e.x), int(e.y))
-		event = we.MousePress{
+		return we.MousePress{
 			Point:  pt,
 			Button: weButton(e.button),
 			Mod:    getMod(),
 		}
-		return event
 	case C.sfEvtMouseButtonReleased:
 		e := C.getMouseButtonEvent(sfEvent)
 		pt := image.Pt(int(e.x), int(e.y))
-		event = we.MouseRelease{
+		return we.MouseRelease{
 			Point:  pt,
 			Button: weButton(e.button),
 			Mod:    getMod(),
 		}
-		return event
 	case C.sfEvtMouseMoved:
 		// TODO(u): Implement we.MouseDrag event.
 		e := C.getMouseMoveEvent(sfEvent)

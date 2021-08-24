@@ -7,7 +7,7 @@ import "C"
 import (
 	"log"
 
-	"github.com/mewmew/we"
+	"github.com/mewspring/we"
 )
 
 // getMod returns the active keyboard modifiers.

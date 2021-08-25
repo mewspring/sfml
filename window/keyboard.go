@@ -1,6 +1,5 @@
 package window
 
-// #cgo LDFLAGS: -lcsfml-window
 // #include <SFML/Window.h>
 import "C"
 
@@ -11,7 +10,8 @@ import (
 )
 
 // getMod returns the active keyboard modifiers.
-func getMod() (mod we.Mod) {
+func getMod() we.Mod {
+	var mod we.Mod
 	if C.sfKeyboard_isKeyPressed(C.sfKeyLShift) == C.sfTrue ||
 		C.sfKeyboard_isKeyPressed(C.sfKeyRShift) == C.sfTrue {
 		mod |= we.ModShift
@@ -32,7 +32,8 @@ func getMod() (mod we.Mod) {
 }
 
 // weMod returns the we.Mod corresponding to the provided SFML modifiers.
-func weMod(e C.sfKeyEvent) (mod we.Mod) {
+func weMod(e C.sfKeyEvent) we.Mod {
+	var mod we.Mod
 	if e.shift == C.sfTrue {
 		mod |= we.ModShift
 	}

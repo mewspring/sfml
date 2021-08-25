@@ -1,6 +1,5 @@
 package texture
 
-// #cgo LDFLAGS: -lcsfml-graphics
 // #include <string.h>
 // #include <SFML/Graphics.h>
 import "C"
@@ -28,51 +27,49 @@ type Drawable struct {
 // NewDrawable creates a drawable texture of the specified dimensions.
 //
 // Note: The Free method of the texture must be called when finished using it.
-func NewDrawable(width, height int) (tex Drawable, err error) {
+func NewDrawable(width, height int) (*Drawable, error) {
 	// Create a rendering texture of the specified dimensions.
-	tex.tex = C.sfRenderTexture_create(C.uint(width), C.uint(height), C.sfFalse)
-	if tex.tex == nil {
-		return Drawable{}, fmt.Errorf("texture.NewDrawable: unable to create %dx%d rendering texture", width, height)
+	t := C.sfRenderTexture_create(C.uint(width), C.uint(height), C.sfFalse)
+	if t == nil {
+		return nil, fmt.Errorf("texture.NewDrawable: unable to create %dx%d rendering texture", width, height)
 	}
-
+	tex := &Drawable{
+		tex: t,
+	}
 	// Create a sprite for the rendering texture.
-	tex.sprite = C.sfSprite_create()
-	if tex.sprite == nil {
-		return Drawable{}, errors.New("texture.NewDrawable: unable to create sprite")
+	sprite := C.sfSprite_create()
+	if sprite == nil {
+		return nil, errors.New("texture.NewDrawable: unable to create sprite")
 	}
+	tex.sprite = sprite
 	C.sfSprite_setTexture(tex.sprite, tex.texture(), C.sfTrue)
-
 	return tex, nil
 }
 
 // texture returns the texture associated with the rendering texture.
-func (tex Drawable) texture() *C.sfTexture {
+func (tex *Drawable) texture() *C.sfTexture {
 	return C.sfRenderTexture_getTexture(tex.tex)
 }
 
 // LoadDrawable loads the provided file and converts it into a drawable texture.
 //
 // Note: The Free method of the texture must be called when finished using it.
-func LoadDrawable(path string) (tex Drawable, err error) {
+func LoadDrawable(path string) (*Drawable, error) {
 	// Load the provided file and convert it into a read-only texture.
 	src, err := Load(path)
 	if err != nil {
-		return Drawable{}, err
+		return nil, err
 	}
 	defer src.Free()
-
 	// Create a drawable texture of the same image dimensions.
-	tex, err = NewDrawable(src.Width(), src.Height())
+	tex, err := NewDrawable(src.Width(), src.Height())
 	if err != nil {
-		return Drawable{}, err
+		return nil, err
 	}
-
 	// Draw the read-only source texture onto the drawable texture.
-	err = tex.Draw(image.ZP, src)
-	if err != nil {
-		return Drawable{}, err
+	if err := tex.Draw(image.ZP, src); err != nil {
+		return nil, err
 	}
-
 	return tex, nil
 }
 
@@ -80,69 +77,65 @@ func LoadDrawable(path string) (tex Drawable, err error) {
 // texture.
 //
 // Note: The Free method of the texture must be called when finished using it.
-func ReadDrawable(img image.Image) (tex Drawable, err error) {
+func ReadDrawable(img image.Image) (*Drawable, error) {
 	// Read the provided image and convert it into a read-only texture.
 	src, err := Read(img)
 	if err != nil {
-		return Drawable{}, err
+		return nil, err
 	}
 	defer src.Free()
-
 	// Create a drawable texture of the same image dimensions.
-	tex, err = NewDrawable(src.Width(), src.Height())
+	tex, err := NewDrawable(src.Width(), src.Height())
 	if err != nil {
-		return Drawable{}, err
+		return nil, err
 	}
-
 	// Draw the read-only source texture onto the drawable texture.
-	err = tex.Draw(image.ZP, src)
-	if err != nil {
-		return Drawable{}, err
+	if err := tex.Draw(image.ZP, src); err != nil {
+		return nil, err
 	}
-
 	return tex, nil
 }
 
 // Free frees the texture.
-func (tex Drawable) Free() {
+func (tex *Drawable) Free() {
 	C.sfSprite_destroy(tex.sprite)
 	C.sfRenderTexture_destroy(tex.tex)
 }
 
 // Width returns the width of the texture.
-func (tex Drawable) Width() int {
+func (tex *Drawable) Width() int {
 	size := C.sfRenderTexture_getSize(tex.tex)
 	return int(size.x)
 }
 
 // Height returns the height of the texture.
-func (tex Drawable) Height() int {
+func (tex *Drawable) Height() int {
 	size := C.sfRenderTexture_getSize(tex.tex)
 	return int(size.y)
 }
 
 // Draw draws the entire src image onto the dst texture starting at the
 // destination point dp.
-func (dst Drawable) Draw(dp image.Point, src wandi.Image) (err error) {
+func (dst *Drawable) Draw(dp image.Point, src wandi.Image) error {
 	sr := image.Rect(0, 0, src.Width(), src.Height())
 	return dst.DrawRect(dp, src, sr)
 }
 
 // DrawRect draws a subset of the src image, as defined by the source rectangle
 // sr, onto the dst texture starting at the destination point dp.
-func (dst Drawable) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
+func (dst *Drawable) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) error {
 	switch srcImg := src.(type) {
-	case Drawable:
+	case *Drawable:
 		C.sfSprite_setTextureRect(srcImg.sprite, sfmlIntRect(sr))
 		C.sfSprite_setPosition(srcImg.sprite, sfmlFloatPt(dp))
 		C.sfRenderTexture_drawSprite(dst.tex, srcImg.sprite, nil)
 		C.sfRenderTexture_display(dst.tex)
-	case Image:
+	case *Image:
 		C.sfSprite_setTextureRect(srcImg.sprite, sfmlIntRect(sr))
 		C.sfSprite_setPosition(srcImg.sprite, sfmlFloatPt(dp))
 		C.sfRenderTexture_drawSprite(dst.tex, srcImg.sprite, nil)
 		C.sfRenderTexture_display(dst.tex)
-	case font.Text:
+	case *font.Text:
 		// TODO(u): Handle sr?
 		text := textText(srcImg)
 		C.sfText_setPosition(text, sfmlFloatPt(dp))
@@ -155,19 +148,18 @@ func (dst Drawable) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle
 }
 
 // Fill fills the entire texture with the provided color.
-func (dst Drawable) Fill(c color.Color) {
+func (dst *Drawable) Fill(c color.Color) {
 	C.sfRenderTexture_clear(dst.tex, sfmlColor(c))
 }
 
 // Image returns an image.Image representation of the texture.
-func (tex Drawable) Image() (img image.Image, err error) {
+func (tex *Drawable) Image() (image.Image, error) {
 	// Copy the rendering texture to a SFML image.
 	sfImg := C.sfTexture_copyToImage(tex.texture())
 	if sfImg == nil {
 		return nil, errors.New("Drawable.Image: unable to create image from texture")
 	}
 	defer C.sfImage_destroy(sfImg)
-
 	// Create a Go RGBA image based on the pixels of the SFML image.
 	pix := C.sfImage_getPixelsPtr(sfImg)
 	if pix == nil {
@@ -176,6 +168,5 @@ func (tex Drawable) Image() (img image.Image, err error) {
 	size := C.sfImage_getSize(sfImg)
 	dst := image.NewRGBA(image.Rect(0, 0, int(size.x), int(size.y)))
 	C.memcpy(unsafe.Pointer(&dst.Pix[0]), unsafe.Pointer(pix), C.size_t(len(dst.Pix)))
-
 	return dst, nil
 }

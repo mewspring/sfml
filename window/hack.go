@@ -22,8 +22,8 @@ type drawableHack struct {
 }
 
 // drawableSprite returns the sprite of the provided texture.Drawable.
-func drawableSprite(tex texture.Drawable) *C.sfSprite {
-	return (*drawableHack)(unsafe.Pointer(&tex)).sprite
+func drawableSprite(tex *texture.Drawable) *C.sfSprite {
+	return (*drawableHack)(unsafe.Pointer(tex)).sprite
 }
 
 // imageHack is a copy of texture.Image without modifications. Through the use
@@ -38,8 +38,8 @@ type imageHack struct {
 }
 
 // imageSprite returns the sprite of the provided texture.Image.
-func imageSprite(tex texture.Image) *C.sfSprite {
-	return (*imageHack)(unsafe.Pointer(&tex)).sprite
+func imageSprite(tex *texture.Image) *C.sfSprite {
+	return (*imageHack)(unsafe.Pointer(tex)).sprite
 }
 
 // textHack is a copy of font.Text without modifications. Through the use of
@@ -52,6 +52,6 @@ type textHack struct {
 }
 
 // textText returns the text of the provided font.Text.
-func textText(text font.Text) *C.sfText {
-	return (*textHack)(unsafe.Pointer(&text)).text
+func textText(text *font.Text) *C.sfText {
+	return (*textHack)(unsafe.Pointer(text)).text
 }

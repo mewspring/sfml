@@ -19,6 +19,6 @@ type textHack struct {
 }
 
 // textText returns the text of the provided font.Text.
-func textText(text font.Text) *C.sfText {
-	return (*textHack)(unsafe.Pointer(&text)).text
+func textText(text *font.Text) *C.sfText {
+	return (*textHack)(unsafe.Pointer(text)).text
 }

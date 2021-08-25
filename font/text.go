@@ -1,6 +1,5 @@
 package font
 
-// #cgo LDFLAGS: -lcsfml-graphics
 // #include <SFML/Graphics.h>
 import "C"
 
@@ -26,19 +25,20 @@ type Text struct {
 //
 // Note: The Free method of the text entry must be called when finished using
 // it.
-func NewText(f Font, args ...interface{}) (text Text, err error) {
+func NewText(font *Font, args ...interface{}) (*Text, error) {
 	// Create a text entry and associate the font with it.
-	text.text = C.sfText_create()
-	if text.text == nil {
-		return Text{}, errors.New("font.NewText: unable to create text")
+	t := C.sfText_create()
+	if t == nil {
+		return nil, errors.New("font.NewText: unable to create text")
 	}
-	C.sfText_setFont(text.text, f.font)
-
+	text := &Text{
+		text: t,
+	}
+	C.sfText_setFont(text.text, font.font)
 	// Set the default font size, style and color of the text.
 	text.SetSize(12)
 	text.SetStyle(Regular)
 	text.SetColor(color.Black)
-
 	// Customize the text, size, style and color based on the provided arguments.
 	for _, arg := range args {
 		switch v := arg.(type) {
@@ -52,22 +52,21 @@ func NewText(f Font, args ...interface{}) (text Text, err error) {
 			text.SetColor(v)
 		}
 	}
-
 	return text, nil
 }
 
 // Free frees the text entry.
-func (text Text) Free() {
+func (text *Text) Free() {
 	C.sfText_destroy(text.text)
 }
 
 // SetText sets the text of the text entry.
-func (text Text) SetText(s string) {
+func (text *Text) SetText(s string) {
 	C.sfText_setUnicodeString(text.text, utf32(s))
 }
 
 // SetSize sets the font size, in pixels, of the text.
-func (text Text) SetSize(size int) {
+func (text *Text) SetSize(size int) {
 	C.sfText_setCharacterSize(text.text, C.uint(size))
 }
 
@@ -87,23 +86,23 @@ const (
 )
 
 // SetStyle sets the style of the text.
-func (text Text) SetStyle(style Style) {
+func (text *Text) SetStyle(style Style) {
 	C.sfText_setStyle(text.text, C.sfUint32(style))
 }
 
 // SetColor sets the color of the text.
-func (text Text) SetColor(c color.Color) {
+func (text *Text) SetColor(c color.Color) {
 	C.sfText_setColor(text.text, sfmlColor(c))
 }
 
 // Width returns the width of the text entry.
-func (text Text) Width() int {
+func (text *Text) Width() int {
 	bounds := C.sfText_getLocalBounds(text.text)
 	return int(bounds.width + bounds.left)
 }
 
 // Height returns the height of the text entry.
-func (text Text) Height() int {
+func (text *Text) Height() int {
 	bounds := C.sfText_getLocalBounds(text.text)
 	return int(bounds.height + bounds.top)
 }

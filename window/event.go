@@ -49,7 +49,7 @@ import (
 // Note: Some internal window events of SFML depend on calls to PollEvent to
 // take effect. For instance a call to SetTitle will not update the window title
 // until the next call of PollEvent.
-func (win Window) PollEvent() (event we.Event) {
+func (win Window) PollEvent() we.Event {
 	// Poll the event queue until we locate a non-nil event or the queue is
 	// empty.
 	var sfEvent C.sfEvent
@@ -58,8 +58,7 @@ func (win Window) PollEvent() (event we.Event) {
 			// Return nil if the event queue is empty.
 			return nil
 		}
-		event = weEvent(sfEvent)
-		if event != nil {
+		if event := weEvent(sfEvent); event != nil {
 			return event
 		}
 	}
@@ -73,7 +72,7 @@ var prev image.Point
 
 // weEvent returns the corresponding we.Event for the provided SFML event or nil
 // if no such event exists.
-func weEvent(sfEvent C.sfEvent) (event we.Event) {
+func weEvent(sfEvent C.sfEvent) we.Event {
 	typ := C.getEventType(sfEvent)
 	switch typ {
 	// Window events.
@@ -143,7 +142,7 @@ func weEvent(sfEvent C.sfEvent) (event we.Event) {
 		// TODO(u): Implement we.MouseDrag event.
 		e := C.getMouseMoveEvent(sfEvent)
 		pt := image.Pt(int(e.x), int(e.y))
-		event = we.MouseMove{
+		event := we.MouseMove{
 			Point: pt,
 			From:  prev,
 		}

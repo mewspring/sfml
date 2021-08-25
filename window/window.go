@@ -4,8 +4,9 @@
 // [1]: http://www.sfml-dev.org/
 package window
 
-// #cgo LDFLAGS: -lcsfml-graphics
 // #include <SFML/Graphics.h>
+//
+// #cgo LDFLAGS: -lcsfml-graphics -lcsfml-window
 import "C"
 
 import (
@@ -45,9 +46,9 @@ type Window struct {
 // event handling, as long as all event handling takes place in the main thread.
 //
 // Note: The Close method of the window must be called when finished using it.
-func Open(width, height int, style ...Style) (win Window, err error) {
+func Open(width, height int, style ...Style) (*Window, error) {
 	if len(style) > 1 {
-		return Window{}, fmt.Errorf("window.Open: invalid number of optional window styles; expected zero or one, got %d", len(style))
+		return nil, fmt.Errorf("window.Open: invalid number of optional window styles; expected zero or one, got %d", len(style))
 	}
 
 	// Open a new window of the specified dimensions.
@@ -66,7 +67,10 @@ func Open(width, height int, style ...Style) (win Window, err error) {
 			sfStyle = C.sfFullscreen
 		}
 	}
-	win.win = C.sfRenderWindow_create(mode, title, sfStyle, nil)
+	w := C.sfRenderWindow_create(mode, title, sfStyle, nil)
+	win := &Window{
+		win: w,
+	}
 
 	// TODO(u): Decide if vsync should be enabled by default.
 
@@ -85,7 +89,7 @@ func Open(width, height int, style ...Style) (win Window, err error) {
 }
 
 // Close closes the window.
-func (win Window) Close() {
+func (win *Window) Close() {
 	C.sfRenderWindow_close(win.win)
 	C.sfRenderWindow_destroy(win.win)
 }
@@ -93,50 +97,50 @@ func (win Window) Close() {
 // SetTitle sets the title of the window.
 //
 // Note: The title will be updated on the next call to PollEvent.
-func (win Window) SetTitle(title string) {
+func (win *Window) SetTitle(title string) {
 	C.sfRenderWindow_setUnicodeTitle(win.win, utf32(title))
 }
 
 // ShowCursor displays or hides the mouse cursor depending on the value of
 // visible. It is visible by default.
-func (win Window) ShowCursor(visible bool) {
+func (win *Window) ShowCursor(visible bool) {
 	C.sfRenderWindow_setMouseCursorVisible(win.win, sfmlBool(visible))
 }
 
 // Width returns the width of the window.
-func (win Window) Width() int {
+func (win *Window) Width() int {
 	size := C.sfRenderWindow_getSize(win.win)
 	return int(size.x)
 }
 
 // Height returns the height of the window.
-func (win Window) Height() int {
+func (win *Window) Height() int {
 	size := C.sfRenderWindow_getSize(win.win)
 	return int(size.y)
 }
 
 // Draw draws the entire src image onto the window starting at the destination
 // point dp.
-func (win Window) Draw(dp image.Point, src wandi.Image) (err error) {
+func (win *Window) Draw(dp image.Point, src wandi.Image) error {
 	sr := image.Rect(0, 0, src.Width(), src.Height())
 	return win.DrawRect(dp, src, sr)
 }
 
 // DrawRect draws a subset of the src image, as defined by the source rectangle
 // sr, onto the window starting at the destination point dp.
-func (win Window) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) (err error) {
+func (win *Window) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) error {
 	switch srcImg := src.(type) {
-	case texture.Drawable:
+	case *texture.Drawable:
 		sprite := drawableSprite(srcImg)
 		C.sfSprite_setTextureRect(sprite, sfmlIntRect(sr))
 		C.sfSprite_setPosition(sprite, sfmlFloatPt(dp))
 		C.sfRenderWindow_drawSprite(win.win, sprite, nil)
-	case texture.Image:
+	case *texture.Image:
 		sprite := imageSprite(srcImg)
 		C.sfSprite_setTextureRect(sprite, sfmlIntRect(sr))
 		C.sfSprite_setPosition(sprite, sfmlFloatPt(dp))
 		C.sfRenderWindow_drawSprite(win.win, sprite, nil)
-	case font.Text:
+	case *font.Text:
 		// TODO(u): Handle sr?
 		text := textText(srcImg)
 		C.sfText_setPosition(text, sfmlFloatPt(dp))
@@ -149,16 +153,16 @@ func (win Window) DrawRect(dp image.Point, src wandi.Image, sr image.Rectangle) 
 }
 
 // Fill fills the entire window with the provided color.
-func (win Window) Fill(c color.Color) {
+func (win *Window) Fill(c color.Color) {
 	C.sfRenderWindow_clear(win.win, sfmlColor(c))
 }
 
 // SetActive activates the CPU context of the window.
-func (win Window) SetActive() {
+func (win *Window) SetActive() {
 	C.sfRenderWindow_setActive(win.win, C.sfTrue)
 }
 
 // Display displays what has been rendered so far to the window.
-func (win Window) Display() {
+func (win *Window) Display() {
 	C.sfRenderWindow_display(win.win)
 }

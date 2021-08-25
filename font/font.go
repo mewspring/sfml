@@ -5,8 +5,9 @@
 // [1]: http://www.sfml-dev.org/
 package font
 
-// #cgo LDFLAGS: -lcsfml-graphics
 // #include <SFML/Graphics.h>
+//
+// #cgo LDFLAGS: -lcsfml-graphics
 import "C"
 
 import (
@@ -23,17 +24,19 @@ type Font struct {
 // Load loads the provided TTF font.
 //
 // Note: The Free method of the font must be called when finished using it.
-func Load(path string) (f Font, err error) {
+func Load(path string) (*Font, error) {
 	// Load the FFT font file.
-	f.font = C.sfFont_createFromFile(C.CString(path))
-	if f.font == nil {
-		return Font{}, fmt.Errorf("font.Load: unable to load %q", path)
+	f := C.sfFont_createFromFile(C.CString(path))
+	if f == nil {
+		return nil, fmt.Errorf("font.Load: unable to load %q", path)
 	}
-
-	return f, nil
+	font := &Font{
+		font: f,
+	}
+	return font, nil
 }
 
 // Free frees the font.
-func (f Font) Free() {
-	C.sfFont_destroy(f.font)
+func (font *Font) Free() {
+	C.sfFont_destroy(font.font)
 }

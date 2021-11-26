@@ -193,3 +193,13 @@ func (win *Window) SetCursorPos(pt image.Point) {
 	pixelPos := C.sfRenderWindow_mapCoordsToPixel(win.win, coordPos, nil)
 	C.sfMouse_setPosition(pixelPos, (*C.sfWindow)(unsafe.Pointer(win.win)))
 }
+
+// GrabCursor specifies whether to grab the mouse cursor within the given
+// window.
+func (win *Window) GrabCursor(grab bool) {
+	grabbed := C.sfFalse
+	if grab {
+		grabbed = C.sfTrue
+	}
+	C.sfWindow_setMouseCursorGrabbed((*C.sfWindow)(unsafe.Pointer(win.win)), C.int(grabbed))
+}

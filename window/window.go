@@ -13,6 +13,8 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"math"
+	"unsafe"
 
 	"github.com/mewspring/sfml/font"
 	"github.com/mewspring/sfml/texture"
@@ -165,4 +167,29 @@ func (win *Window) SetActive() {
 // Display displays what has been rendered so far to the window.
 func (win *Window) Display() {
 	C.sfRenderWindow_display(win.win)
+}
+
+// CursorPos returns the current cursor position within the given window.
+func (win *Window) CursorPos() image.Point {
+	// get pixel position (may be different than world pos if window is scaled).
+	//
+	// e.g. for a window (640x480) scaled to 100%x50% (i.e. 640x240), then if the
+	// cursor is at pixel (10, 10) in the window the returned world position
+	// would be (10, 20) since those would be the world coordinates of what the
+	// mouse cursor actually hovers over.
+	pixelPos := C.sfMouse_getPosition((*C.sfWindow)(unsafe.Pointer(win.win)))
+	// convert pixel position to world position.
+	coordPos := C.sfRenderWindow_mapPixelToCoords(win.win, pixelPos, nil)
+	return image.Pt(int(math.Round(float64(coordPos.x))), int(math.Round(float64(coordPos.y))))
+}
+
+// SetCursorPos sets the position of the cursor in the given window.
+func (win *Window) SetCursorPos(pt image.Point) {
+	coordPos := C.sfVector2f{
+		x: C.float(pt.X),
+		y: C.float(pt.Y),
+	}
+	// convert world position to pixel position.
+	pixelPos := C.sfRenderWindow_mapCoordsToPixel(win.win, coordPos, nil)
+	C.sfMouse_setPosition(pixelPos, (*C.sfWindow)(unsafe.Pointer(win.win)))
 }

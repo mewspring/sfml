@@ -89,7 +89,7 @@ func fallback(src image.Image) *image.RGBA {
 	dst := image.NewRGBA(dr)
 	draw.Draw(dst, dr, src, bounds.Min, draw.Src)
 
-	log.Printf("texture.fallback: fallback conversion for non-RGBA image (%T) finished in: %v.\n", src, time.Since(start))
+	log.Printf("texture.fallback: fallback conversion for non-RGBA image (%T) finished in: %v", src, time.Since(start))
 
 	return dst
 }

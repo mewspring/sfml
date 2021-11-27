@@ -257,6 +257,6 @@ func weKey(code C.sfKeyCode) we.Key {
 	}
 
 	// Unknown key code.
-	log.Printf("window.weKey: unknown key code %d.\n", code)
+	log.Printf("window.weKey: unknown key code %d", code)
 	return 0
 }

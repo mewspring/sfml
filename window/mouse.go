@@ -26,6 +26,6 @@ func weButton(button C.sfMouseButton) we.Button {
 	}
 
 	// Unknown mouse button.
-	log.Printf("window.weButton: unknown mouse button %d.\n", button)
+	log.Printf("window.weButton: unknown mouse button %d", button)
 	return 0
 }

@@ -120,7 +120,8 @@ func weEvent(sfEvent C.sfEvent) we.Event {
 				Mod:   getMod(),
 			}
 		default:
-			panic(fmt.Errorf("support for mouse wheel %v not yet implemented", e.wheel))
+			log.Printf("support for mouse wheel %v not yet implemented", e.wheel)
+			return nil
 		}
 	case C.sfEvtMouseButtonPressed:
 		e := C.getMouseButtonEvent(sfEvent)
@@ -154,7 +155,7 @@ func weEvent(sfEvent C.sfEvent) we.Event {
 		return we.MouseEnter(false)
 
 	default:
-		log.Printf("window.weEvent: support for SFML event type %d not yet implemented.\n", typ)
+		log.Printf("window.weEvent: support for SFML event type %d not yet implemented", typ)
 		return nil
 	}
 }
